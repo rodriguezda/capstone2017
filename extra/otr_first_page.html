@@ -1,0 +1,3379 @@
+
+
+
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">  <!-- SCR 6845 -->
+
+<HTML>
+<HEAD>
+	<TITLE>District of Columbia: Real Property Sales Search</TITLE>
+	<META HTTP-EQUIV="Expires" CONTENT=0>
+	<META HTTP-EQUIV="Pragma" CONTENT="No-Cache">
+	<META HTTP-EQUIV="Cache-Control"NO-CACHE>
+	<style type="text/css">
+		.footnote		{font-size: 11px; line-height: 12px; font-family: arial, helvetica, sans-serif; color: #666666}
+	</style>
+	<link rel="stylesheet" type="text/css" href="./style_sheets/Standard.css">  <!-- SCR 6845 -->
+	<link rel="stylesheet" type="text/css" href="/style_sheets/etsc.css">  <!-- SCR 6845 -->
+	<link rel="stylesheet" type="text/css" href="/style_sheets/main.css">  <!-- SCR 6845 -->
+
+<script language="javascript">
+
+// Declare Global Variables
+var reWhitespace = /[$<>?\|}#(){~*&^%@!+=_-]/
+var reLetter = /[a-zA-Z]/
+var reDigit = /[0-9]/
+
+
+function checkStreetNumberChar( evt ) {
+     var inCode = evt.keyCode ? evt.keyCode : evt.which;
+     var inChar = String.fromCharCode(inCode);
+ 
+     //regex only allows the following characters: 0-9 and backspaces
+     if(!inChar.match(/[a-zA-Z0-9\s\-\b]/))  {
+       evt.returnValue = false;
+       return false;
+     }  else {
+       evt.returnValue = true;
+       return true;
+     }
+ }
+
+function checkStreetNameChar( evt ){
+     var inCode = evt.keyCode ? evt.keyCode : evt.which;
+     var inChar = String.fromCharCode(inCode);
+ 
+     //regex only allows the following characters: 0-9 and backspaces
+     if(!inChar.match(/[a-zA-Z0-9\s\b]/))  {
+       evt.returnValue = false;
+       return false;
+     }  else {
+       evt.returnValue = true;
+       return true;
+     }
+ }
+
+function changeIframe() {
+	var innerHtmlElement = document.getElementById("subNBHDFrame");
+	var selectNbhdCode = document.SearchForm.selectNbhdCode.value;
+	if(selectNbhdCode == null || selectNbhdCode == ""){
+		selectNbhdCode = "0";
+	}
+	if (window.XMLHttpRequest){// code for IE7+, Firefox, Chrome, Opera, Safari
+		xmlhttp=new XMLHttpRequest();
+	}else{// code for IE6, IE5
+		xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+	}
+	xmlhttp.onreadystatechange=function() {
+		if (xmlhttp.readyState==4 && xmlhttp.status==200){
+			innerHtmlElement.innerHTML=xmlhttp.responseText;
+			//document.BusinessInfo.displayAccountId.innerHTML=xmlhttp.responseText;
+		}
+	}
+	xmlhttp.open("GET","RP_SubNbhd.jsp?currentsubnbhd="+selectNbhdCode,true);
+	xmlhttp.send();
+}
+
+function isLetter(c)
+{
+   var isChar = true;
+
+   for (k = 0 ; k < c.length ; k++) {
+      var n = c.charAt(k);
+
+      if (reWhitespace.test(n)) {
+         isChar = false;
+      } else {
+         isChar = true;
+      }
+   }
+
+  return isChar;
+}
+
+function isDigit(c){
+   var isNum = false;
+
+   for (k = 0 ; k < c.length ; k++)   {
+      var n = c.charAt(k);
+
+      if (reDigit.test(n))      {
+         isNum = true;
+      }  else  {
+         isNum = false;
+      }
+   }
+   return isNum;
+}
+
+function validCharacterField(premiseAddr, square, suffix, lot){
+  if ( isLetter(premiseAddr) == false )  {
+      alert("You have enter an invalid character inside the Premise Address field.");
+      return false;
+  }
+  if ( isLetter(suffix) == false ) {
+      alert("You have enter an invalid character inside the Property ID Suffix field.");
+      return false;
+  }
+
+  if ( isLetter(square) == false ) {
+      alert("You have enter an invalid numeric value inside the Property ID Square field.");
+      return false;
+  }
+
+  if ( isLetter(lot) == false ) {
+      alert("You have enter an invalid numeric value inside the Property ID Lot field.");
+      return false;
+  }
+
+
+}
+
+//if date field is entered. Check if both date fields are entered
+function validateDateFields(sz_fromDate,sz_endDate)
+{
+	if ( sz_fromDate != "")	{
+		if ( sz_endDate != ""){
+			return true;
+		}else{
+			alert("To conduct a date range search, please enter an end date.");
+			return false;
+		}
+	}else{
+		if ( sz_endDate != "")	{
+			if ( sz_fromDate != "")	{
+				return true;
+			}else	{
+				alert("To conduct a date range search, please enter an begin date.");
+				return false;
+			}
+		}
+	 }
+
+}
+
+function verifyDate(aDate){
+   var month = 0;
+   var day = 0;
+   var year = 0;
+   var err = false;
+
+   if(aDate == "")   {
+      alert("Please enter a valid date.  Format MM/DD/YYYY");
+      return false;
+   }
+   if(aDate.length < 6  || aDate.length > 10)   {
+      err = true;
+   }
+   if(aDate.length >= 6  && aDate.length <= 10)  {
+      // mm/dd/yy format
+      if(aDate.charAt(2) == "/" && aDate.charAt(5) == "/" && aDate.length == 10)     {
+         // Check that month is a number.
+         for (var i = 0; i < 2; i++)   {
+            var ch = aDate.substring(i, i + 1);
+            if(ch < "0" || "9" < ch)  {
+               err=true;
+            }
+         }
+         // Check that day is a number.
+         for (var i = 3; i < 5; i++)  {
+            var ch = aDate.substring(i, i + 1);
+            if(ch < "0" || "9" < ch) {
+               err=true;
+            }
+         }
+         // Check that year is a number.
+         for (var i = 6; i < 10; i++)  {
+            var ch = aDate.substring(i, i + 1);
+            if(ch < "0" || "9" < ch) {
+               err=true;
+            }
+         }
+         // Set variables
+         if (err == false) {
+            month = eval(aDate.substring(0,2));
+            day = eval(aDate.substring(3,5));
+            year = eval(aDate.substring(6,aDate.length));
+         }
+      }
+      // Incorrect format.
+      else  {
+         var err = true;
+      }
+   }
+
+   // Check that month is between 1 &12.
+   if(month <= 0 || month >= 13) {
+      err = true;
+   }
+
+  // Check that day is right depending on month.
+   if( month == 2 && ((year/4) == parseInt(year/4)) ) {
+      if (day <= 0 || day > 29)   {
+         err=true;
+      }
+   }
+   if( month == 2 && ((year/4) != parseInt(year/4)) )  {
+      if (day <= 0 || day > 28)  {
+         err=true;
+      }
+   }
+   if( month == 4 || month == 6 || month == 9 || month == 11 )  {
+      if (day <= 0 || day > 30)  {
+         err=true;
+      }
+   }
+   if(month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12)  {
+      if (day <= 0 || day > 31)   {
+         err = true;
+      }
+   }
+
+
+   // If anything appears incorrect, display error message.
+   if (err == true)  {
+      alert("\nPlease enter a valid date.\n\n     Format MM/DD/YYYY");
+      return false;
+   }
+
+   // If all is OK, return true.
+   return true;
+
+} // end VerifyDate function
+
+function checkEmptyForm(){
+  if (document.SearchForm.txtBuildingNumber.value == "" && document.SearchForm.txtStreetName.value == "" && 
+  		document.SearchForm.txtThoroughfare.value == "" && document.SearchForm.txtQuadrant.value == "" &&
+  		document.SearchForm.selectNbhdCode.value == "" && document.SearchForm.txtSquare.value == ""
+         && document.SearchForm.txtSuffix.value == "" && document.SearchForm.txtLot.value == "" && document.SearchForm.selectMortgageCode.value == ""
+            && document.SearchForm.selectUseCode.value == "" && document.SearchForm.selectWard.value == "" && document.SearchForm.dtFrom.value == "" &&
+            document.SearchForm.dtTo.value == ""){
+   	alert("\nPlease enter at least one field to search.\n\n");
+    return false;
+  }
+
+}
+
+function trim(str){
+   return str.replace(/^\s*|\s*$/g,"");
+}
+
+function validateForm(frm){
+	document.SearchForm.txtSubNbdh.value = document.SearchForm.selectSubNbhdCode.value;
+	
+   //var premiseAddr = frm.txtPremiseAddr.value;
+   var premiseAddr = trim(frm.txtBuildingNumber.value) + " " + trim(frm.txtStreetName.value) + " " + frm.txtThoroughfare.value + " " + frm.txtQuadrant.value; 
+   var square = frm.txtSquare.value;
+   var suffix = frm.txtSuffix.value;
+   var lot = frm.txtLot.value;
+  if (checkEmptyForm() == false) {
+     return false;
+  } else  {
+     if (validCharacterField(premiseAddr, square, suffix, lot) == false)  {
+         return false;
+     }  else   {
+		frm.txtPremiseAddr.value = premiseAddr; 
+		
+		
+		frm.submit();
+	
+     }
+  }
+
+}
+
+
+</script>
+	<script LANGUAGE="JavaScript" src="javaScript/openWindow.js" TYPE="text/javascript"></script>
+</HEAD>
+<BODY onload="document.SearchForm.txtSquare.focus();changeIframe();">
+	<div class="pageCntr">
+		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> <!--SCR 6845-->
+
+<html lang="en" dir="ltr" prefix="content: http://purl.org/rss/1.0/modules/content/ dc: http://purl.org/dc/terms/ foaf: http://xmlns.com/foaf/0.1/ og: http://ogp.me/ns# rdfs: http://www.w3.org/2000/01/rdf-schema# sioc: http://rdfs.org/sioc/ns# sioct: http://rdfs.org/sioc/types# skos: http://www.w3.org/2004/02/skos/core# xsd: http://www.w3.org/2001/XMLSchema#">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+    <!--link rel="shortcut icon" href="http://otr.cfo.dc.gov/sites/default/files/favicon_0.ico" type="image/vnd.microsoft.icon" /-->
+    <link rel="canonical" href="/rui_header_responsive" />
+    <meta name="Generator" content="Drupal 7 (http://drupal.org)" />
+    <link rel="shortlink" href="/rui_header_responsive" />
+    <title>rui_header_responsive | otr</title>  
+      <!--[if lt IE 9]><script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+    <script language="JavaScript" type="text/javascript">
+      function redirect_mits () { 
+        var url = "http://www.MyTax.DC.gov";
+        var msg = "The Office of Tax and Revenue has launched a new web portal, MyTax.DC.gov, which makes viewing, paying, and for some tax types, filing your District of Columbia taxes - - Simpler. Faster. Safer. The function that you have requested is now migrated to MyTax.DC.gov. Click the Ok button to be re-routed to the new portal. Click the Cancel button to remain on the current page."
+        var status = confirm( msg );
+        
+        if ( status ) {
+            window.open(url);
+            //win=window.open(url, "New Window","height=300, width=500, resizable=no, status=no, scrollbars=yes, location=no, menubar=no, toolbar=no, left=120, top=5");
+        } else {
+        
+        }
+      }
+    </script>
+
+</head>
+<body class="html not-front not-logged-in page-node page-node- page-node-970882 node-type-system-use domain-otr-cfo-dc-gov context-rui-header-responsive">
+  <div id="skip-link">
+    <a href="#main-content" class="element-invisible element-focusable">Skip to main content</a>
+  </div>
+  <div class="region region-page-top" id="region-page-top">
+  <div class="region-inner region-page-top-inner">
+      </div>
+</div>  
+
+<style>
+@font-face {
+  font-family: 'Roboto-Regular';
+  src: url('/rui_css_fonts/Roboto-Regular-webfont.eot'); /* IE9 Compat Modes */
+  src: url('/rui_css_fonts/Roboto-Regular-webfont.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('/rui_css_fonts/Roboto-Regular-webfont.woff') format('woff'), /* Modern Browsers */
+       url('/rui_css_fonts/Roboto-Regular.ttf')  format('truetype'), /* Safari, Android, iOS */
+       url('/rui_css_fonts/Roboto-Regular-webfont.svg#svgFontName') format('svg'); /* Legacy iOS */
+  }
+
+.clearfix:after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+
+  .element-invisible {
+      display: none;
+  }
+
+
+header, hgroup, section, body {
+  margin: 0 0 10px 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  font-size: 100%;
+  vertical-align: baseline;
+  font: inherit;
+}
+
+h1, h2, h3, h4, h5, h6{
+  text-decoration: none;
+  font-weight: normal;
+  line-height: 1.5;
+  letter-spacing: normal;
+  font-family: Roboto-Regular;
+  color:#20394f;
+}
+
+/*  CHANGE 7889 */
+a, body{
+  font-family: arial, helvetica;
+  font-size: 12px;
+}
+a{
+  color: #2b4888;
+  text-decoration:none;
+}
+a:hover{
+  text-decoration:underline;
+}
+
+
+.dots {
+  background-image: url(/rui_css_images/dot.png);
+  min-width: 100%;
+  position: absolute;
+  top: 4px;
+  height: 3px;
+}
+
+img{
+  border:0 none;
+}
+#dcrui-header-top {
+  border-top: 11px solid #2B4888;
+}
+.zone-branding-wrapper{
+  border-bottom: 5px solid #ccc;
+}
+.header-link:hover, .rightButton:hover,#mobile-main-menu li.expanded ul li:hover {
+  background: #DDE8FE;
+}
+.header-link {
+  position: absolute;
+  top: 25px;
+  right: 5px;
+  text-align: center;
+  text-transform: capitalize;
+  display: block;
+  border: 1px solid #ccc;
+  -webkit-border-radius: 0px;
+  -moz-border-radius: 0px;
+  border-radius: 0px;
+  background: #fff;
+  /*cursor: pointer;
+  */text-shadow: none;
+  padding: 0 15px;
+  line-height: 50px;
+}
+.logo-img{
+  float: left;
+    margin: 0 10px 0 10px;
+}
+.logo-img img{
+      width: 100px;
+}
+
+.region-branding{
+  border-bottom: 5px solid #ccc;
+}
+
+/*
+h2:after {
+    border-bottom: 1px solid #d5d5d5;
+    bottom: -6px;
+    content: "";
+    left: 0;
+    position: absolute;
+    width: 100%;
+}
+h2 {
+    background: url(http://rui.dc.gov/rui/css/images/h2stars.png) no-repeat scroll 99% 75% rgba(0, 0, 0, 0);
+    border-bottom: 1px solid #d5d5d5;
+    font-weight: normal;
+    margin-bottom: 8px;
+    padding-bottom: 1px;
+    position: relative;
+}
+*/
+/* ---mobile screens without HD ---*/
+@media only screen and (max-width: 960px) {
+
+
+/*********** HEADER STYLES *********/
+h1{
+  font-size:22px;
+}
+h2{
+  font-size:18px;
+}
+.logo-img{
+  float: none;
+  margin: 21px 10px 0px 10px;
+}
+h1.agency-title{
+  margin-left:10px;
+}
+
+.rightButton, .header-link
+{
+position: absolute;
+top: 25px;
+right: 5px;
+text-align: center;
+text-transform: capitalize;
+display: block;
+border: 1px solid #ccc;
+-webkit-border-radius: 0px;
+-moz-border-radius: 0px;
+border-radius: 0px;
+padding: 0 15px;
+background: #fff;
+/*cursor: pointer;
+*/text-shadow: none;
+line-height: 50px;
+}
+/*.agency-title{ 
+  margin-left:10px;
+}*/
+.header-link {
+  right: 65px;
+}
+.header-link-no-menu{
+  right: 10px;
+}
+.header-link:hover, .rightButton:hover {
+  background: #DDE8FE;
+}
+
+
+nav{
+  display: none;
+}
+
+/*--Menu Styles--*/
+
+/*hide main menu*/
+
+.block-system-main-menu {
+  display:none; 
+}
+
+#mobile-head {
+  margin: 0;
+  min-width:255px;
+  width:100%;
+  display: block;
+  background:transparent;
+  position:absolute;
+  top:0;
+  z-index:9;
+
+}
+
+#mobile-head #mobile-main-menu-container {
+  position: relative;
+  height: 0px;
+  width: 100%;
+  margin: 0;
+  z-index: 10;
+}
+
+#mobile-head #search-container {
+  position:absolute;
+  right:0px;
+  top:60px;
+  width:100%;
+  background:rgba(236,236,236,0.6);
+  border-top:1px solid #D9D9D9;
+    border-bottom:1px solid #D9D9D9;
+  display:none;
+  z-index:9999;
+}
+
+#mobile-head #search  {
+  float:right;
+  margin:10px;
+  width:90%;
+}
+ 
+#mobile-main-menu {
+  display: none;
+  list-style: none;
+  margin: 0px;
+  padding: 5px;
+  height: auto;
+  position: absolute;
+  border:1px solid #D9D9D9;
+  top : 60px;
+  left: 0;
+  width: 98%;
+  z-index: 1000;
+  background: #fff;
+}
+
+.no-js #mobile-head #search-container,
+.no-js #mobile-main-menu {
+  display:block;  
+}
+
+#mobile-main-menu.showme {
+  display: block;
+}
+
+#mobile-head ul {
+  margin:0; 
+}
+#mobile-head ul li ul {
+    background-color: #fff;
+    display: none;
+    padding: 0 0 25px;
+}
+
+#mobile-main-menu li {
+  display: block;
+  border-bottom: 1px solid #fff;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  
+}
+
+
+#mobile-main-menu li:before {
+  content: ' ';
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid #2b4888;
+  border-right: 2px solid #2b4888;
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  margin-top: -6px;
+}
+
+#mobile-main-menu li:after {
+  display: block;
+  height: 1px;
+  content: ' ';
+  background: #fff;
+  position: absolute;
+  left:0px;
+  right: 0;
+  bottom: 0;
+}
+
+
+#mobile-main-menu li a {
+  color: #2b4888;
+/*  background: #ebecee url(http://rui.dc.gov/rui/css/images/nav-arrow.png) no-repeat scroll 95% 50%;*/
+  background: #ebecee;
+  background-size: auto;
+  font-weight: normal;
+/*  font-size: 16px;
+  font-family: Arial, serif;*/
+  display: block;
+  padding: 10px 10px;
+  text-align: left;
+  text-decoration: none;
+  line-height: 30px;
+}
+
+
+#mobile-main-menu li a:hover,
+#mobile-main-menu li a:focus,
+#mobile-main-menu li a:active
+ {
+/*  color:#ffffff;   
+*/  
+  /*background: rgb(43, 72, 136) url(http://rui.dc.gov/rui/css/images/nav-arrow.png) no-repeat scroll 95% 50%;
+  background: rgba(3, 72, 136, 1.0) url(http://rui.dc.gov/rui/css/images/nav-arrow.png) no-repeat scroll 95% 50%; */
+}
+
+
+#mobile-main-menu li a span.mobile-arrow {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  margin-bottom: -3px;
+  margin-left: 10px;
+  float: right;
+}
+
+#mobile-main-menu li.expanded {
+  position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+#mobile-main-menu li.expanded:before{
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-top: 0;
+  border-right: 0;
+  -moz-transform: rotate(90deg);
+  -ms-transform: rotate(90deg);
+  -o-transform: rotate(90deg);
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
+  position: absolute;
+  right: 20px;
+  top: 50%;
+  margin-top: -6px;
+  color: #fff;
+
+}
+
+#mobile-main-menu li.expanded:after {
+  display: block;
+  height: 1px;
+  content: ' ';
+  background: #fff;
+  position: absolute;
+  left:0px;
+  right: 0;
+  bottom: 0;
+}
+
+#mobile-main-menu li.expanded ul li a {
+    background: none repeat scroll 0 0 transparent;
+    border-bottom: 1px dotted #ccc;
+    margin: 0 25px;
+    width: 80%;
+}
+
+#mobile-main-menu li.expanded a {
+
+/*  background-color: #0885d5;
+*/}
+
+/* use splice eventually */ 
+#mobile-main-menu li.expanded > a {
+  /*background: #3e3e3e;*/ /* Old browsers */
+  /*background: -moz-linear-gradient(top, #3e3e3e 1%, #383838 100%);*/ /* FF3.6+ */
+  /*background: -webkit-gradient(linear, left top, left bottom, color-stop(1%,#3e3e3e), color-stop(100%,#383838));*/ /* Chrome,Safari4+ */
+  /*background: -webkit-linear-gradient(top, #3e3e3e 1%,#383838 100%);*/ /* Chrome10+,Safari5.1+ */
+  /*background: -o-linear-gradient(top, #3e3e3e 1%,#383838 100%);*/ /* Opera 11.10+ */
+  /*background: -ms-linear-gradient(top, #3e3e3e 1%,#383838 100%); *//* IE10+ */
+  /*background: linear-gradient(to bottom, #3e3e3e 1%,#383838 100%);*/ /* W3C */
+  /*filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3e3e3e', endColorstr='#383838',GradientType=0 );*/ /* IE6-9 */
+  /*background-image: url(/sites/all/themes/dc_home_omega/images/plus.png);*/
+  
+  background-repeat:no-repeat;
+  background-position: 97% 50%;
+}
+
+
+#mobile-main-menu li.expanded > a:hover,
+#mobile-main-menu li.expanded > a:active,
+#mobile-main-menu li.expanded > a:focus {
+  background:#dde8fe;
+  text-decoration:underline;
+/*  color:#fff;
+*/
+/*  background-color: rgb(43, 72, 136);
+  background-color: rgba(3, 72, 136, 1.0);*/
+}
+
+#mobile-main-menu li.expanded  > a.expand {
+  /*color:#fff;
+  background-image: url(http://dc.gov/sites/all/themes/dc_home_omega/images/minus.png);
+  background-repeat:no-repeat;*/
+  background-position: 97% 50%;
+  border-bottom:none;
+  background-color: rgb(43, 72, 136);
+    background-color: rgba(3, 72, 136, 1.0);
+    color: #fff;
+}
+#mobile-main-menu > li.expanded > a:before
+{
+  content:'   +   ' ;
+  font-size:21px;
+  float:right;
+  color:#2b4888;
+  margin-right: 8px;
+}
+
+#mobile-main-menu li.expanded > a.expand:before {
+    color: #fff;
+    content: " - ";
+    float: right;
+    font-size: 21px;
+}
+section-header{
+  margin-bottom:10px;
+}
+/*********** FOOTER STYLES *********/
+
+#dcrui-footer-wrapper{
+  display: none;
+}
+
+.section-footer{
+  text-align: center;
+}
+.zone-footer-wrapper{
+  background: #fff;
+  color: #646464;
+}
+.zone-footer-wrapper ul li{
+  list-style: none;
+}
+.zone-footer-wrapper a{
+  color: #646464;
+  text-decoration: none;
+}
+.zone-footer-wrapper a:visited{
+  color: #000000;
+}
+.zone-footer-wrapper .dcFooter .dcFooterList {
+  text-align: left;
+}
+.zone-second-footer-wrapper{
+  color: #fff;
+/*  margin-top: -45px;
+*/}
+/*.zone-second-footer-wrapper, .zone-footer{
+  margin-left: 10px;
+  margin-right: 10px;
+}*/
+#resources-link ul{
+  margin-bottom: 0;
+}
+.dcFooterListLower ul li{
+  list-style: none;
+  margin-bottom: 5px;
+  padding: 15px;
+  background: #2B4888;
+  text-align: left;
+}
+.dcFooterListLower ul li a{
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  display: block;
+}
+/*.zone-second-footer-wrapper .dcFooterListLower ul li a:after{
+  content: ">";
+  float: right;
+}*/
+.dcFooterListLower ul li a:hover{
+  text-decoration: underline;
+  background: none;
+}
+.dcFooterListLower ul li a:visited{
+  color: #fff;
+}
+.zone-second-footer-wrapper .dcFooter{
+  text-align: center;
+  text-decoration: none;
+}
+.dcFooterListLower ul{
+  margin-top: 15px;
+  font-family: Roboto-Regular;
+  padding-left: 0;
+}
+.dcFooterList ul {
+    display: none;
+    background: #fff;
+    text-indent: 10px;
+    padding:0;
+}
+.dcFooterList ul li{
+  padding: 15px;
+  font-size: 14px;
+  font-family: Roboto-Regular;
+}
+.dcFooterList ul li:hover{
+  background: #DDE8FE;
+}
+.dcFooterList ul li a{
+  width: 100%;
+  display: block;
+  color: #2b4888;
+}
+.dcFooterList ul li a:hover{
+  text-decoration: underline;
+}
+.dcFooterList ul.open {
+    display: block;
+    transition:display 2s;
+  -webkit-transition:display 2s; /* Safari */  
+}
+
+.dcFooterList .dcFooterLabel:before {
+    color: #2b4888;
+    content: " + ";
+    float: right;
+    font-size: 21px;
+    margin-right: 4px;
+}
+.dcFooterList .dcFooterLabel.expanded:before {
+    color: #2b4888;
+    content: " - ";
+    float: right;
+    font-size: 21px;
+}
+.dcFooterList .dcFooterLabel:before:hover{
+  text-decoration:none;
+}
+
+/* CODE FOR ARROWS USING IMAGE*/
+/*.dcFooterList ul.open a:after{
+  content: url(/sites/default/files/dc/shared_assets/more_arrow.png);
+  float:right;
+  margin-right: 5px;
+}*/
+/* CODE FOR ARROWS USING CSS*/
+.dcFooterList ul li, .dcFooterListLower ul li{
+  position: relative;
+}
+.dcFooterList ul li a:before, .dcFooterList ul li a:after,
+.dcFooterListLower ul li a:before, .dcFooterListLower ul li a:after{
+    border-right: 2px solid;
+    content: '';
+    display: block;
+    height: 8px;
+    margin-top: -6px;
+    position: absolute;
+    -moz-transform: rotate(135deg);
+    -o-transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
+    transform: rotate(135deg);
+    right: 10px;
+    top: 50%;
+    width: 0;
+    margin-right: 12px;
+    behavior: url(PIE.htc);
+}
+.dcFooterList ul li a:before, .dcFooterList ul li a:after{
+    border-right-color: #2B4888;
+}
+.dcFooterListLower ul li a:before, .dcFooterListLower ul li a:after {
+    border-right-color: #fff; 
+}
+
+.dcFooterList ul li a:after,.dcFooterListLower ul li a:after{
+    margin-top: -1px;
+    -moz-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+    behavior: url(PIE.htc);
+}
+
+ .dcFooterList .footer-icon{
+  display: none;
+ }
+ .dcFooterList div{
+  margin-bottom: 5px;
+  font-weight: normal;
+  color: #2b4888;
+ }
+ .dcFooterList .top-level-footer .toggle-sign{
+  float: right;
+  font-size: 14px;
+  margin-right: 10px;
+  padding-right: 10px;
+  padding-top: 15px;
+  color: #2b4888;
+ }
+ div.dcFooterLabel{
+  background: #EBECEE;
+  padding: 15px;
+ }
+ div.dcFooterLabel:hover{
+  text-decoration: underline;
+  background:#dde8fe;
+}
+.dcFooterListLower ul .last{
+  background: #2B4888 url(/rui_css_images/footer-stars-bars.png) no-repeat center!important;
+  min-height: 20px;
+}
+/*#section-footer:after{
+  background: url(http://dc.gov/sites/default/files/dc/shared_assets/BOW13_final.jpg) no-repeat center!important;
+  min-height: 70px;
+  content: '';
+  display: block;
+  margin-top: 10px;
+}*/
+.award-logo img{
+  display: none;
+}
+
+}
+
+
+
+
+
+
+
+
+/*------mobile, tablet and hd mobile------*/
+@media only screen and (max-width: 799px) {
+
+}
+
+
+
+
+
+/*------mobile, tablet and hd mobile------*/
+@media only screen and (max-width: 960px) {
+
+.dcrui-main-nav{
+    display: none;
+}
+
+}
+
+
+
+
+
+/* ========================================== */
+/* ! Desktop                                  */
+/* ========================================== */
+@media only screen and (min-width: 960px) {
+  
+  #mobile-head {
+    display:none;
+  }
+
+  #block-domain-conf-domain-main-links {
+      display: block;
+  }
+  .block-domain-main-links div.content {
+      display: table;
+      margin: 0 auto;    
+  }
+  .block-domain-main-links div.content > div.dcrui-main-nav >  ul.menu-sub {
+      display: table-row;
+      white-space: nowrap;
+  }
+  .block-domain-main-links div.content > div.dcrui-main-nav >  ul {
+      height: 30px;
+      list-style: outside none none;
+      margin: 0px 0px 0px 65px;
+  }
+  .block-domain-main-links div.content > div.dcrui-main-nav > ul.menu-sub > li {
+      background: #fff;
+      border-right: 1px solid #ccc;
+      float: left;
+      line-height: 30px;
+      list-style: outside none none;
+      margin: 0 !important;
+      padding: 5px 4px 0;
+      position: relative;
+      padding-right: 25px;
+  }
+  .block-domain-main-links div.content > div.dcrui-main-nav > ul.menu-sub > li {
+      padding: 2px 14px;
+  }
+  .block-domain-main-links div.content > div.dcrui-main-nav > ul.menu-sub > li {
+      display: table-cell;
+  }
+
+  .block-domain-main-links div.content > div.dcrui-main-nav > ul.menu-sub > li > ul.menu-sub {
+      background: none repeat scroll 0% 0% #EBECEE;
+      border: 1px solid #CCC;
+      display: none;
+      height: auto;
+      list-style: outside none none;
+      margin: 0px 0px 0px -5px;
+      padding: 5px;
+      position: absolute;
+      text-align: left;
+      width: 580px;
+      z-index: 12;
+  }
+
+
+  #block-domain-conf-domain-main-links {
+    display: block;
+  }
+  #block-menu-block-2 {
+    padding-top:15px;
+    font: inherit;
+  }
+  #zone-branding #block-menu-block-2 a {
+    color: #0038b1;
+    font-family: Roboto-Regular;
+    font-size: 14px;
+    font-weight: normal;
+    margin: 0;
+    padding: 0;
+    text-decoration: none;
+  }
+  /* mobie menu is hidden in Normal and Wide screens */
+  #mobile-head {
+    display: none;
+  }
+  ul.menu li {
+    margin: 0;
+  }
+  #zone-branding #block-menu-block-2 li {
+    display: inline;
+    padding: 0 5px 0 8px;
+  }
+  .block-domain-main-links {
+    display: block;
+/*    margin-top: -13px;
+*/  }
+  .block-domain-main-links div.content {
+    display: table;
+    margin: 0 auto;
+  }
+  .block-domain-main-links div.content > div.dcrui-main-nav > ul.menu-sub {
+    display: table-row;
+    white-space: nowrap;
+  }
+  .block-domain-main-links div.content > div.dcrui-main-nav > ul {
+    height: 30px;
+    list-style: outside none none;
+    margin: 0 0 0 65px;
+  }
+  .block-domain-main-links div.content > div.dcrui-main-nav > ul.menu-sub > li.expanded {
+    padding-right: 25px;
+    position: relative;
+  }
+  .block-domain-main-links div.content > div.dcrui-main-nav> ul.menu-sub > li {
+    display: table-cell;
+    background: #fff;
+    border-right: 1px solid #ccc;
+    float: left;
+    line-height: 30px;
+    list-style: outside none none;
+    margin: 0 !important;
+    padding: 2px 9px;
+    position: relative;
+  }
+  .block-domain-main-links div.content > div.dcrui-main-nav > ul.menu-sub li.last {
+    border-right: 0 none;
+  }
+  .block-domain-main-links div.content > div.dcrui-main-nav > ul.menu-sub > li.expanded > a::after {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #444444;
+    content: "";
+    height: 0;
+    position: absolute;
+    right: 10px;
+    top: 18px;
+    width: 0;
+  }
+  #zone-header ul li a:link, #zone-header ul li a:active {
+    color: #2b4888;
+  }
+  #zone-header ul li a {
+    font-size: 14px;
+  }
+  .block-domain-main-links div.content > div.dcrui-main-nav > ul.menu-sub li a {
+    background: 0;
+    padding: 0;
+  }
+  .block-domain-main-links div.content > div.dcrui-main-nav > ul.menu-sub > li > ul.menu-sub {
+    /*background: #fff;*/
+    background: #ebecee;
+    border: 1px solid #ccc;
+    display: none;
+    height: auto;
+    list-style: outside none none;
+    margin: 0px 0 0 -5px;
+    padding: 5px;
+    position: absolute;
+    text-align: left;
+    width: 580px;
+    z-index: 12;
+  }
+  .block-domain-main-links div.content > div.dcrui-main-nav > ul.menu-sub > li > ul.menu-sub li {
+    background: #ebecee;
+    /*border: 1px solid #fff;*/
+    display: block;
+    /*float: left;*/
+/*    line-height: 50px;
+*/    padding: 5px;
+    width: 275px;
+  }
+  #block-domain-conf-domain-main-links div.content > div.dcrui-main-nav >ul.menu-sub>li:hover > ul.menu-sub {
+    display: block;
+  }
+  ul.menu-sub ul.three-column ul {
+    float: left;
+    padding-left: 8px;
+  }
+  ul.menu-sub ul.three-column {
+    padding: 0px !important;
+    width: 555px !important;
+  }
+  ul.menu-sub ul.three-column li {
+    width: 170px !important;
+    white-space: normal;
+    padding: 10px 0px !important;
+  }
+
+  #block-domain-conf-domain-main-links div.content > div.dcrui-main-nav > ul.menu-sub > li > ul.menu-sub li:hover {
+    background: #ebecee;
+  }
+  #block-domain-conf-domain-main-links div.content > div.dcrui-main-nav > ul.menu-sub > li.expanded > ul.menu-sub > ul > li a {
+    line-height: 20px;
+  }
+  #block-domain-conf-domain-main-links div.content > div.dcrui-main-nav > ul.menu-sub > li.expanded > ul.menu-sub > ul ul {
+    display: none;
+  }
+  .menu-drop-left{
+    position: relative;
+  }
+  .menu-drop-left ul{
+    right: -1px;
+  }
+  .fixed {
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    z-index: 9;
+  }
+  .stickyhideout_active {
+    display: block !important;
+  }
+  .navigation {
+    display: none;
+  }
+  a:hover, a:visited:hover, .region-content-inner a:hover, #mobile-main-menu li a:hover, .mobile-search-btn:hover, #mobile-head div.rightButton:hover, 
+  .block-domain-main-links div.content > div.dcrui-main-nav > ul.menu-sub li:hover, #mobile-head div.rightButton.pressed a, #mobile-head #mobile-search-icon.pressed a:hover, 
+  .block-domain-main-links div.content > div.dcrui-main-nav > ul.menu-sub > li:hover {
+    background: #dde8ff;
+  }
+  #mobile-search-icon {
+    display: none;
+  }
+  .block-domain-main-links div.content > div.dcrui-main-nav > ul.menu-sub > li {
+    display: table-cell;
+  }
+  .block-domain-main-links div.content > div.dcrui-main-nav > ul.menu-sub > li {
+    background: #fff;
+    border-right: 1px solid #ccc;
+    float: left;
+    line-height: 30px;
+    list-style: outside none none;
+    margin: 0 !important;
+    padding: 5px 4px 0;
+    position: relative;
+    padding-right: 25px;
+  }
+  /* Menu Region Styling -End */
+
+
+
+
+  /* Footer styles */
+  /** Used to clear main body content to allow for the gray footer separator bar **/
+  form#Form1:after {
+  height: 0;
+   content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+  }
+  .zone-footer-wrapper a:visited {
+  color: #000000;
+  }
+  .zone-footer-wrapper {
+  background: #fff;
+  color: #646464;
+  }
+  .container-12 {
+  margin-left: auto;
+  margin-right: auto;
+  }
+
+  #zone-postscript {
+  width: 1040px;
+  }
+
+  .dcrui-footer-wrapper #resource-icon-section {
+  text-align: center;
+  margin: 10px;
+  color: #ccc;
+  font-size: 15px;
+  display: inline-block;
+  }
+  .dcrui-footer-wrapper:before {
+  box-shadow: 0px 7px 10px #ccc;
+  content: 'x';
+  display: block;
+  width: 100%;
+  text-indent: -9999px;
+  }
+
+  .zone-prefooter-wrapper, .zone-footer-wrapper, .dcrui-second-footer-wrapper {
+  text-align:center;
+  }
+
+  #zone-postscript {
+  width: 1040px;
+  }
+
+  #zone-postscript {
+  text-align: center;
+  padding: 10px;
+  }
+
+  #zone-postscript {
+  display: block;
+  }
+
+  .dcrui-footer-wrapper #resource-icon-section .resource-content-block {
+  margin: 10px 25px 10px 25px;
+  }
+
+  .dcrui-footer-wrapper #resource-icon-section .resource-content-block {
+  float: left;
+  padding: 10px;
+  position: relative;
+  margin: 10px 25px 10px 25px;
+  }
+  .dcrui-footer-wrapper .twitter-resource-icon {
+  background: url(images/twitter.png) no-repeat center;
+  }
+  .twitter-resource-icon, .facebook-resource-icon, .maps-resource-icon, .mobile-resource-icon, .webcasts-resource-icon, .rss-resource-icon, .data-resource-icon, .youtube-resource-icon, .subscribe-resource-icon, .twitter-resource-icon:hover, .facebook-resource-icon:hover, .maps-resource-icon:hover, .mobile-resource-icon:hover, .webcasts-resource-icon:hover, .rss-resource-icon:hover, .data-resource-icon:hover, .youtube-resource-icon:hover, .subscribe-resource-icon:hover {
+  min-height: 50px;
+  width: 50px;
+  }
+
+  .resource-icon-text:hover {
+      background: #DDE8FF;
+  }
+  .dcrui-footer-wrapper .twitter-resource-icon{
+    background: url(/rui_css_images/twitter.png) no-repeat center;
+  }
+  .dcrui-footer-wrapper .twitter-resource-icon:hover{
+    background: url(/rui_css_images/twitter-hover.png) no-repeat center;
+  }
+  .dcrui-footer-wrapper .facebook-resource-icon {
+    background: url(/rui_css_images/facebook.png) no-repeat center;
+  }
+  .dcrui-footer-wrapper .facebook-resource-icon:hover {
+    background: url(/rui_css_images/facebook-hover.png) no-repeat center;
+  }
+  .dcrui-footer-wrapper .mobile-resource-icon {
+    background: url(/rui_css_images/mobile.png) no-repeat center;
+  }
+  .dcrui-footer-wrapper .mobile-resource-icon:hover {
+    background: url(/rui_css_images/mobile-hover.png) no-repeat center;
+  }
+  .dcrui-footer-wrapper .maps-resource-icon {
+    background: url(/rui_css_images/maps.png) no-repeat center;
+  }
+  .dcrui-footer-wrapper .maps-resource-icon:hover {
+    background: url(/rui_css_images/maps-hover.png) no-repeat center;
+  }
+  .dcrui-footer-wrapper .webcasts-resource-icon {
+    background: url(/rui_css_images/webcasts.png) no-repeat center;
+  }
+  .dcrui-footer-wrapper .webcasts-resource-icon:hover {
+    background: url(/rui_css_images/webcasts-hover.png) no-repeat center;
+  }
+  .dcrui-footer-wrapper .rss-resource-icon {
+    background: url(/rui_css_images/rss.png) no-repeat center;
+  }
+  .dcrui-footer-wrapper .rss-resource-icon:hover {
+    background: url(/rui_css_images/rss-hover.png) no-repeat center;
+  }
+  .dcrui-footer-wrapper .data-resource-icon {
+    background: url(/rui_css_images/data.png) no-repeat center;
+  }
+  .dcrui-footer-wrapper .data-resource-icon:hover {
+    background: url(/rui_css_images/data-hover.png) no-repeat center;
+  }
+  .dcrui-footer-wrapper .youtube-resource-icon {
+    background: url(/rui_css_images/youtube.png) no-repeat center;
+  }
+  .dcrui-footer-wrapper .youtube-resource-icon:hover {
+    background: url(/rui_css_images/youtube-hover.png) no-repeat center;
+  }
+  .dcrui-footer-wrapper .subscribe-resource-icon {
+    background: url(/rui_css_images/subscribe.png) no-repeat center;
+  }
+  .dcrui-footer-wrapper .subscribe-resource-icon:hover {
+    background: url(/rui_css_images/subscribe-hover.png) no-repeat center;
+  }
+
+
+  .resource-icon-text {
+  position: absolute;
+  bottom: -20px;
+  font-family: Roboto-Regular;
+  font-size: 14px;
+  }
+
+
+  #zone-postscript-wrapper .more-link {
+  margin-right: 20px;
+  }
+  h4.more-link {
+  text-align: right;
+  background: 0;
+  padding: 0;
+  }
+
+  h4.more-link:after {
+  content: url(/rui_css_images/more-arrow.png);
+  float: right;
+  margin-left: 7px;
+  margin-top: 4px;
+  display: block;
+  }
+
+  .zone-prefooter-wrapper {
+  background: url(/rui_css_images/line_bg.jpg) repeat-x center;
+  }
+  .zone-prefooter-wrapper:before {
+  content: url(/rui_css_images/main_stars.jpg);
+  min-width: 100px;
+  margin-top: -29px;
+  }
+
+
+  .dcFooter {
+    TEXT-ALIGN: center !important;
+    FONT-SIZE: 14px;
+    PADDING-BOTTOM: 24px;
+    LINE-HEIGHT: 19px;
+    display:inline-block;
+  }
+
+
+
+  .dcFooterList {
+  DISPLAY: inline-block;
+  MARGIN: 6px 18px;
+  VERTICAL-ALIGN: top;
+  TEXT-ALIGN: left;
+  }
+
+  #resources-link{
+    display:none;
+  }
+
+  .dcrui-section-footer {
+  text-align: center;
+  }
+
+  div.dcFooterLabel {
+  color: #444444;
+  padding: 5px 0 10px 0;
+  }
+  .dcFooterList ul {
+  padding: 0px;
+  margin: 0px;
+  }
+  .dcFooterList li {
+  DISPLAY: list-item;
+  LIST-STYLE-TYPE: none;
+  }
+
+
+
+  .zone-footer-wrapper {
+  background: #EBECEE;
+  color: #646464;
+  }
+
+  /*.dcBar > .dcFooterList{
+    display: inline-block;
+  }
+  */
+  .dcFooter .dcBar {
+  MARGIN-LEFT: auto;
+  WIDTH: 972px;
+  MARGIN-RIGHT: auto;
+  }
+  /*.dcFooter {
+  TEXT-ALIGN: center !important;
+  }*/
+
+  .dcFooterList ul {
+  display: block!important;
+  }
+  .dcrui-second-footer-wrapper {
+  background: #2B4888;
+  }
+  .dcrui-second-footer-wrapper .dcFooterListLower ul li {
+  margin: 15px;
+  }
+  .dcrui-second-footer-wrapper .dcFooterListLower ul li a {
+  font-size: 14px;
+  display: inline;
+  color: #fff;
+  }
+  .dcFooter a:hover, #footer-wrapper a:hover {
+  TEXT-DECORATION: underline;
+  }
+
+  .dcFooterListLower ul::after, .dcFooterListLower ul::before {
+  content: url(/rui_css_images/h2stars.png);
+  }
+
+  .dcFooterListLower ul li {
+  margin: 15px;
+  }
+  .dcFooterListLower li {
+  DISPLAY: inline;
+  }
+  .dcFooterListLower ul li a:hover {
+  text-decoration: underline;
+  background: none;
+  }
+  .dcFooterListLower ul li a:visited {
+  color: #fff;
+  }
+
+}
+
+
+/* ========================================== */
+/* ! Desktop                                  */
+/* ========================================== */
+/*  Center Header Elements  */
+@media only screen and (min-width: 1040px) {
+
+  .centerHeader{
+    width: 1020px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .centerHeader > .logo-img{
+    margin-top: 15px;
+    float: left;
+  }
+  .centerHeader > .header-title{
+    float:left;
+  }
+  .centerHeader > .header-link{
+    float: right;
+    margin-top: 15px;
+    position:relative;
+    top:0;
+    right:0;
+    width:55px;
+  }
+
+
+  #skip-link {
+  left: 50%;
+  margin-left: -5.25em;
+  margin-top: 0px;
+  position: absolute;
+  width: auto;
+  z-index: 50;
+  display: none;
+  }
+  /* DC Header */
+  #fulldcHeader {
+   /*   BORDER-TOP: #b50100 3px solid; BACKGROUND: url(http://dcremoteui.dc.gov/sites/all/themes/dc_agency/images/dcHeaderBg_ver2.jpg) repeat-x 0px 0px; WIDTH: 972px;*/
+      position:relative; z-index:2;
+  }
+
+
+  /* end new top nav */
+  .contentContainer {
+      MARGIN-LEFT: auto; WIDTH: 972px; MARGIN-RIGHT: auto; text-align:left;
+  }
+
+
+  /*#fulldcHeader * {
+      font-family: Arial,Helvetica,sans-serif;
+  }*/
+  #fulldcHeader {
+      margin: 0 auto;
+      position: relative;
+      width: 972px;
+  }
+
+
+
+
+}
+@media only print {
+	#dcrui-header-top,
+	#fulldcHeader, #block-domain-conf-domain-main-links,
+	.leftNavPositionWidth, #mobile-head, 
+	#dcrui-footer-wrapper,
+	#dcrui-section-footer {
+		display: none;
+	}
+	
+	.contentScrollNowrap{  
+		margin: 0 auto;
+		height:100%;
+		overflow-x: visible;
+		background: #ffffff;	
+		white-space: normal;
+	}
+	
+	.contentScroll{  
+		margin:0 auto;
+		height: 100%;
+		overflow-x: visible;
+		background-color: #ffffff;
+	}
+}
+
+
+</style>
+	
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
+<!--link rel="stylesheet" type="text/css" href="http://rui.dc.gov/rui/css/remoteCSS.css"-->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<!--script type="text/javascript" src="http://rui.dc.gov/rui/js/dc2.js"></script-->
+<script>
+
+$(document).ready(function() {
+
+      $('.dcFooterLabel').click(function () {
+          $(this).siblings('ul').slideToggle();
+          $(this).toggleClass('expanded');
+          return false;
+      });
+
+
+
+
+function checkresponsive(){
+if ($('.dcrui-main-nav').length > 0) {
+if ($('#mobile-head').length < 1) {
+    $(".region-branding-inner").append("<div id='mobile-head'><div id='mobile-main-menu-container'><ul id='mobile-main-menu'></ul></div>");
+    $(".dcrui-main-nav ul:first-child").children().each(function() {
+      $(this).clone().appendTo('#mobile-main-menu');
+      
+    });
+    
+    $('#mobile-main-menu li.expanded > a').each(function () {
+      var list = $(this).siblings('ul.menu-sub');
+      $(this).clone().prependTo(list).wrap('<li></li>');
+    });
+
+    $('#mobile-main-menu-container').append('<div class="rightButton"><a href="#">Menu</a></div');
+    
+    $('#mobile-main-menu li a').append('<span class="mobile-main-link"></span>');
+    
+    $('#mobile-main-menu li.expanded > a').click(function () {
+          $(this).toggleClass('expand').siblings('ul').slideToggle();
+          return false;
+       });
+    
+    $('#mobile-head .rightButton').click(function() {
+    $('#mobile-main-menu').toggleClass('showme');
+    $('#mobile-head .rightButton').toggleClass('pressed');
+    $('.pane-content.mobile-search').slideUp();
+    $('#mobile-head #mobile-search-icon').removeClass('pressed');
+    //jQuery('#mobile-main-menu').css("min-height",jQuery(window).height()+"px");
+    });
+    
+    $('#mobile-head #mobile-search-icon a').click(function() {
+        $('#mobile-main-menu').removeClass('showme');
+      $('#mobile-head .rightButton').removeClass('pressed');
+      $('#search-container').slideToggle();
+      $('#mobile-head #mobile-search-icon').toggleClass('pressed');
+      $(this).blur();
+    });   
+      }
+  }
+  else
+  {
+    $('.header-link').toggleClass('header-link-no-menu');
+  }
+}
+
+checkresponsive();
+
+//Make entire view rows clickable, usefull for mobile
+ $('.header-link').click(function() {
+        var href = jQuery(this).find("a").attr("href");
+        if(href) {
+            window.location = href;
+        }
+    });
+
+
+
+
+
+
+
+//Adds hover class to top navigation on hover and active secondary level until mouseout
+  jQuery("#block-domain-conf-domain-main-links div.content>div.dcrui-main-nav>ul.menu-sub>li").hover(function(){
+    jQuery(this).addClass("hover");
+    //jQuery(this).children('ul').show();
+  }, function(){
+       jQuery(this).removeClass("hover");
+      // jQuery("#block-domain-conf-domain-main-links li.expanded ul").hide();
+  });
+
+  //Determin and tag menu items more than 372 pixels from the left of 1st level menu items to add
+  //Drop left style called menu-drop-left
+  //For each 1st level menu item
+  topLevel = jQuery("#block-domain-conf-domain-main-links div.content>div.dcrui-main-nav>ul.menu-sub>li").each(function() {
+  //if that main menu items left side is more than 480 pixels from the left template gutter
+    if(jQuery(this).position().left > 580) {
+       //console.log(jQuery(this).position().left);
+       //Add drop left class to that top-level menu item
+       jQuery(this).addClass('menu-drop-left');
+    }
+  }); //end each statement
+
+  // Split all Sub Groups up into 3 equal parts lists
+  // Select each sub level group
+  subLevels = jQuery("#block-domain-conf-domain-main-links div.content > div.dcrui-main-nav > ul.menu-sub > li.expanded > ul.menu-sub").each(function() {
+    // Select all children nodes of a sub level group
+    var subLevelGroup = jQuery(this).children();
+    // If more than three children
+    if(3 <= jQuery(subLevelGroup).length) {
+       // add three-column class
+       jQuery(this).addClass('three-column');
+       // Find one third split end point
+       splitHere = Math.ceil(jQuery(subLevelGroup).length/3);
+       // Find two thirds start split point
+       var splitHereToo = Math.ceil(2*(jQuery(subLevelGroup).length/3));
+       // Splice children into UL groups for each of the 3 columns and add class names
+       jQuery(subLevelGroup).slice(0, splitHere).wrapAll('<ul class="column-one" />');
+       jQuery(subLevelGroup).slice(splitHere, splitHereToo).wrapAll('<ul class="column-two" />');
+       jQuery(subLevelGroup).slice(splitHereToo, jQuery(subLevelGroup).length).wrapAll('<ul class="column-three" />');
+    }
+  }); //end each statement
+
+  //Reduce the width for dropdown sub menus that only have 1 item (Desktop)
+  jQuery("#block-domain-conf-domain-main-links div.content>div.dcrui-main-nav>ul.menu-sub>li.expanded>ul.menu-sub").each(function() {
+    if(jQuery(this).children().length <= 2) {
+       jQuery(this).css({"width":"auto"});
+    }
+  });
+
+
+}); //end .ready function
+
+</script>
+
+
+
+
+<ruiHeader>
+    <header id="dcrui-header" class="section section-header">
+        <div id="dcrui-header-top">     
+                <div class="dots"></div>
+        </div>
+        <div id="dcrui-header-branding-wrapper" class="zone-wrapper zone-branding-wrapper clearfix">    
+            <div class="region-inner region-branding-inner centerHeader">
+                <div class="logo-img">
+                    <a title="DC.Gov Home" href="http://dc.gov">
+                    <img title="DC.Gov Home" alt="DC.Gov Home" src="/rui_css_images/dcgov_logo.jpg"></a>
+                </div>
+                <div class="header-title">
+                    <h1 class="agency-title">
+                        
+                    Office of Tax and Revenue               
+                                </h1>
+                </div>
+<!-- 
+                <div class="header-link">
+<a href="/" title="Website">Website</a>                                </div>
+            </div>  
+ -->
+        </div>
+    </header>
+</ruiHeader>
+
+
+
+<dcheader>
+<div id="fulldcHeader"><div id="page-wrapper"><div id="page">
+<!--[if lt IE 7]>
+    <script language="JavaScript">
+    function correctPNG() // correctly handle PNG transparency in Win IE 5.5 & 6.
+    {
+       var arVersion = navigator.appVersion.split("MSIE")
+       var version = parseFloat(arVersion[1])
+       if ((version >= 5.5) && (document.body.filters)) 
+       {
+          for(var i=0; i<document.images.length; i++)
+          {
+             var img = document.images[i]
+             var imgName = img.src.toUpperCase()
+             if (imgName.substring(imgName.length-3, imgName.length) == "PNG")
+             {
+                var imgID = (img.id) ? "id='" + img.id + "' " : ""
+                var imgClass = (img.className) ? "class='" + img.className + "' " : ""
+                var imgTitle = (img.title) ? "title='" + img.title + "' " : "title='" + img.alt + "' "
+                var imgStyle = "display:inline-block;" + img.style.cssText 
+                if (img.align == "left") imgStyle = "float:left;" + imgStyle
+                if (img.align == "right") imgStyle = "float:right;" + imgStyle
+                if (img.parentElement.href) imgStyle = "cursor:hand;" + imgStyle
+                var strNewHTML = "<span " + imgID + imgClass + imgTitle
+                + " style=\"" + "width:" + img.width + "px; height:" + img.height + "px;" + imgStyle + ";"
+                + "filter:progid:DXImageTransform.Microsoft.AlphaImageLoader"
+                + "(src=\'" + img.src + "\', sizingMethod='scale');\"></span>" 
+                img.outerHTML = strNewHTML
+                i = i-1
+             }
+          }
+       }    
+    }
+    window.attachEvent("onload", correctPNG);
+    </script>
+<![endif]-->
+
+
+	    
+    <!-- Begin Main header links -->
+    <div id="block-domain-conf-domain-main-links" class="block block-domain-conf block-domain-main-links">  
+        <div class="content">
+            <div class="dcrui-main-nav">
+
+    <ul class="menu-sub"><li class="first leaf"><a href="http://otr.cfo.dc.gov/" title="OTR Home">Home</a></li>
+<li class="expanded"><a href="http://otr.cfo.dc.gov/services" title="Services">Services</a><ul class="menu-sub"><li class="first leaf"><a href="http://otr.cfo.dc.gov/service/individual-income-tax-service-center" title="Individual Income Tax Service Center">Individual Income Tax Service Center</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/service/business-tax-service-center" title="Business Tax Service Center">Business Tax Service Center</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/service/real-property-tax-service-center" title="Real Property Tax Service Center">Real Property Tax Service Center</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/service/recorder-deeds-services" title="Recorder of Deeds Services">Recorder of Deeds Services</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/service/individual-income-tax-service-center" title="Taxpayer Service Center">Taxpayer Service Center</a></li>
+<li class="collapsed"><a href="http://otr.cfo.dc.gov/service/tax-practitioner-service-center" title="Tax Practitioner Service Center">Tax Practitioner Service Center</a></li>
+<li class="collapsed"><a href="http://otr.cfo.dc.gov/service/customer-service-center" title="Customer Service Center">Customer Service Center</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/tax-law-and-guidance" title="Tax Law and Guidance">Tax Law and Guidance</a></li>
+<li class="last leaf"><a href="http://otr.cfo.dc.gov/service/tax-forms-and-publications" title="Tax Forms and Publications">Tax Forms and Publications</a></li>
+</ul></li>
+<li class="expanded"><a href="http://otr.cfo.dc.gov/service/individual-income-taxpayers" title="Individual Income Taxpayers">Individual Income Tax</a><ul class="menu-sub"><li class="first leaf"><a href="http://otr.cfo.dc.gov/page/individual-income-tax-online-filing" title="Individual Income Tax Online Filing">Individual Income Tax Online Filing</a></li>
+<li class="collapsed"><a href="http://otr.cfo.dc.gov/page/federal-and-state-e-file-program" title="Federal/State E-File Program">Federal/State E-File Program</a></li>
+<li class="leaf"><a href="https://www.taxpayerservicecenter.com/IC/" title="Interest Calculator to compute the interest on unpaid DC tax">Interest Calculator</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/service/payment-options-individual-income-tax" title="Payment Options">Payment Options</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/common-individual-income-taxpayer-errors" title="Common Errors">Common Errors</a></li>
+<li class="collapsed"><a href="http://otr.cfo.dc.gov/page/estimated-tax-penalty-individuals" title="Estimated Tax Penalty">Estimated Tax Penalty</a></li>
+<li class="leaf"><a href="http://www.irs.gov/Businesses/Small-Businesses-&amp;-Self-Employed/Small-Business-and-Self-Employed-Tax-Center-1" title="IRS Tax Center for Self-Employed">IRS Tax Center for Self-Employed</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/individual-income-taxpayer-appeal-rights" title="Individual Income Taxpayer Appeal Rights">Individual Income Taxpayer Appeal Rights</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/individual-income-tax-filing-faqs" title="Income Tax Filing FAQs">Income Tax Filing FAQs</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/individual-income-tax-payment-refund-faqs" title="Payment-Refund FAQs">Payment-Refund FAQs</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/individual-income-special-circumstances-faqs" title="Special Circumstances FAQs">Special Circumstances FAQs</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/release/tax-state-and-municipal-bond-income-individuals-repealed" title="State or Municipal Bond Income">State or Municipal Bond Income</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/2014-individual-income-tax-information" title="2014 Individual Income Tax Information">2014 Individual Income Tax Information</a></li>
+<li class="last leaf"><a href="http://otr.cfo.dc.gov/publication/offer-compromise-individual" title="Offer in Compromise for Indiviuals">Offer in Compromise</a></li>
+</ul></li>
+<li class="expanded"><a href="http://otr.cfo.dc.gov/service/business-taxpayers" title="Business Taxpayers">Business Tax</a><ul class="menu-sub"><li class="first leaf"><a href="https://www.taxpayerservicecenter.com/Logon.jsp" title="Login for Existing eTSC Business Users">Login for Existing eTSC Business Users</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/new-business-registration">New Business Registration</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/etsc-account-maintenance">eTSC Account Maintenance</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/publication/electronic-funds-transfer-payment-guide-eft" title="EFT Payment Guide">EFT Payment Guide</a></li>
+<li class="leaf"><a href="https://www.taxpayerservicecenter.com/Tour_Welcome.jsp" title="Tour the eTSC">Tour the eTSC</a></li>
+<li class="leaf"><a href="https://www.taxpayerservicecenter.com/IC/" title="Interest Calculator to compute the interest on unpaid DC Tax">Interest Calculator</a></li>
+<li class="leaf"><a href="http://www.irs.gov/Businesses/Small-Businesses-&amp;-Self-Employed/Apply-for-an-Employer-Identification-Number-(EIN)-Online" title="IRS Employer Identification Number (EIN) Application">IRS Employer Identification Number (EIN) Application</a></li>
+<li class="collapsed"><a href="http://otr.cfo.dc.gov/page/professional-baseball-related-fees-and-taxes" title="Professional Baseball-related Fees and Taxes">Professional Baseball-related Fees and Taxes</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/external-link/certificate-clean-hands-online" title="Certificate of Clean Hands - Online">Certificate of Clean Hands - Online</a></li>
+<li class="leaf"><a href="https://ocfocleanhands.dc.gov/cch/cchEmail.aspx" title="Certificate of Clean Hands - Email">Certificate of Clean Hands - Email</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/combined-reporting-business-entities" title="Combined Reporting for Business Entities">Combined Reporting for Business Entities</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/common-errors-business-taxpayers-00" title="Common Errors of Business Taxpayers">Common Errors of Business Taxpayers</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/publication/electronic-w-2-filing" title="Electronic W-2 Filing Instructions">Electronic W-2 Filing Instructions</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/estimated-tax-penalty-businesses" title="Estimated Tax Penalty - Businesses">Estimated Tax Penalty - Businesses</a></li>
+<li class="leaf"><a href="http://www.irs.gov/Businesses/Small-Businesses-&amp;-Self-Employed/Small-Business-and-Self-Employed-Tax-Center-1" title="IRS Tax Center for Small Businesses">IRS Tax Center for Small Businesses</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/sales-tax-holiday-repealed" title="Sales Tax Holiday Repealed">Sales Tax Holiday Repealed</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/special-events" title="Special Events">Special Events</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/street-and-mobile-food-service-vendors" title="Street and Mobile Food Service Vendors">Street and Mobile Food Service Vendors</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/business-taxpayer-appeal-rights" title="Business Taxpayer Appeal Rights">Business Taxpayer Appeal Rights</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/publication/offer-compromise-business" title="Offer in Compromise for Businesses">Offer in Compromise</a></li>
+<li class="last leaf"><a href="http://otr.cfo.dc.gov/page/payment-options" title="Payment Options">Payment Options</a></li>
+</ul></li>
+<li class="expanded"><a href="http://otr.cfo.dc.gov/service/real-property-taxpayers" title="Real Property">Real Property</a><ul class="menu-sub"><li class="first leaf"><a href="http://otr.cfo.dc.gov/page/understanding-your-real-property-tax-assessment-and-bill" title="Understanding Your Real Property Tax Assessment and Bill">Understanding Your Real Property Tax Assessment and Bill</a></li>
+<li class="collapsed"><a href="http://otr.cfo.dc.gov/page/real-property-assessment-process-0" title="Assessment Process">Assessment Process</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/real-property-assessment-appeals" title="Assessment Appeals">Assessment Appeals</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/real-property-assessments-and-appeals-faqs" title="Assessments and Appeals FAQs">Assessments and Appeals FAQs</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/otr-vacant-real-property" title="Vacant Real Property">Vacant Real Property</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/real-propertybid-tax-online-bill-payment" title="Online Bill Payment">Online Bill Payment</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/real-property-gis-and-mapping-services" title="GIS and Mapping Services">GIS and Mapping Services</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/real-property-tax-database-search" title="Real Property Tax Database Search">Real Property Tax Database Search</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/real-property-public-extract-and-billingpayment-records" title="Real Property Public Extract and Billing/Payment Records">Real Property Public Extract and Billing/Payment Records</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/real-property-tax-bills-due-dates-and-delayed-bills" title="Real Property Tax Bills Due Dates and Delayed Bills">Real Property Tax Bills Due Dates and Delayed Bills</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/real-property-tax-rates-and-billing-faqs" title="Real Property Tax Rates and Billing FAQs">Real Property Tax Rates and Billing FAQs</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/real-propertybid-tax-payments" title="Real Property Tax Payments">Real Property Tax Payments</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/real-property-tax-rates" title="Real Property Tax Rates">Real Property Tax Rates</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/2015-first-come-first-served-special-deed-tax-sale" title="Real Property Tax Sale">Real Property Tax Sale</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/homesteadsenior-citizen-deduction" title="Homestead/Senior Citizen Deduction">Homestead/Senior Citizen Deduction</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/real-property-tax-credits-frequently-asked-questions-faqs" title="Real Property Tax Credits Frequently Asked Questions (FAQs)">Real Property Tax Credits FAQs</a></li>
+<li class="last leaf"><a href="http://otr.cfo.dc.gov/page/other-credits-and-deductions" title="Real Property Other Credits and Deductions">Real Property Other Credits and Deductions</a></li>
+</ul></li>
+<li class="expanded"><a href="http://otr.cfo.dc.gov/service/otr-recorder-deeds" title="Recorder of Deeds">Recorder of Deeds</a><ul class="menu-sub"><li class="first leaf"><a href="http://otr.cfo.dc.gov/service/duties-recorder-deeds-respect-general-recording-requirements" title="General Recording Requirements">General Recording Requirements</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/commercial-refinance-and-modification-recording-requirements">Commercial Refinance and Modification Recording Requirements</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/publication/rod-7-exemptions-recordation">Recordation Tax Exemptions</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/publication/rod-8-exemptions-transfer-tax">Transfer Tax Exemptions</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/publication/rod-4-required-claiming-exemption-recordation-or-transfer-taxes">Documentation Required for Claiming Exemptions</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/service/recorder-deeds-document-images" title="ROD Document Images">Recorder of Deeds - Document Images</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/book/recorder-deeds-tax-forms" title="ROD Tax Forms and Publications">Forms Center</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/service/recorder-deeds-fee-charges" title="Fee Charges">Fee Charges</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/service/recorder-deeds-frequently-asked-questions-faqs" title="Frequently Asked Questions">Frequently Asked Questions</a></li>
+<li class="last leaf"><a href="http://otr.cfo.dc.gov/page/otr-notices" title="ROD Tax Law and Guidance">OTR Notices</a></li>
+</ul></li>
+<li class="expanded"><a href="http://otr.cfo.dc.gov/page/tax-forms-and-publications" title="Tax Forms and Publications">Forms</a><ul class="menu-sub"><li class="first leaf"><a href="http://otr.cfo.dc.gov/page/software-developer-information" title="Software Developer Information">Software Developer Information</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/individual-income-tax-forms" title="Individual Income Tax Forms">Individual Income Tax Forms</a></li>
+<li class="collapsed"><a href="http://otr.cfo.dc.gov/page/business-tax-forms-and-publications" title="2014 Business Tax Forms and Publications (Tax Year 2015)">2014 Business Tax Forms and Publications (Tax Year 2015)</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/prior-year-tax-forms" title="Prior Year Tax Forms">Prior Year Tax Forms</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/miscellaneous-tax-forms-and-publications-0" title="Miscellaneous Tax Forms and Publications">Miscellaneous Tax Forms and Publications</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/real-property-tax-forms" title="Real Property Tax Forms and Publications">Real Property Tax Forms and Publications</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/book/recorder-deeds-tax-forms" title="Recorder of Deeds Tax Forms/Publications">Recorder of Deeds Tax Forms/Publications</a></li>
+<li class="collapsed"><a href="http://otr.cfo.dc.gov/page/otr-resources-and-information" title="Resources and Information">Resources and Information</a></li>
+<li class="collapsed"><a href="http://otr.cfo.dc.gov/page/otr-frequently-asked-questions-faqs" title="OTR FAQs">OTR Frequently Asked Questions (FAQs)</a></li>
+<li class="last leaf"><a href="http://otr.cfo.dc.gov/publication/mailing-addresses-dc-tax-returns" title="Mailing Addresses for DC Tax Returns">Mailing Addresses for DC Tax Returns</a></li>
+</ul></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/customer-survey" title="Customer Survey">Customer Survey</a></li>
+<li class="last expanded"><a href="http://otr.cfo.dc.gov/page/about-otr-0" title="About OTR">About</a><ul class="menu-sub"><li class="first leaf"><a href="http://otr.cfo.dc.gov/page/collection-division" title="Collection Division">Collection Division</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/biography/jeffdewitt" title="CFO Biography">CFO Biography</a></li>
+<li class="leaf"><a href="http://otr.cfo.dc.gov/page/otr-foia-requests" title="OTR FOIA Requests">OTR FOIA Requests</a></li>
+<li class="last leaf"><a href="http://otr.cfo.dc.gov/page/agency-directory" title="Agency Directory">Agency Directory</a></li>
+</ul></li>
+</ul></div>
+  </div></div>
+  <!-- End Main header links -->
+  <div class="pageHeadingBar2"></div>
+  </div></div></div>
+  </dcheader><!-- /.section, /#fulldcHeader -->
+  </body>
+</html>
+		<TABLE class="contentScroll" id=TABLE1>
+			<TR width="100%">
+				<!-- Beginning of left nav bar -->
+				
+
+<TD class="leftNavPositionWidth">
+	<div class="leftNavBorder">
+		<span class="leftNavSuper">
+			<a class="navbar-blue" href="http://cfo.dc.gov/" target="_parent"><strong>CFO HOME</strong></a>
+			<BR><BR>
+			<a class="navbar-blue" href="http://otr.cfo.dc.gov/page/electronic-taxpayer-service-center-etsc" target="_parent"><strong>TAXPAYER SERVICE<br>&nbsp; CENTER</strong></a>
+			<BR><BR>
+            <a class="navbar-blue" href="http://otr.cfo.dc.gov/service/real-property-tax-matters" target="_parent"><strong>REAL PROPERTY<br>&nbsp; SERVICES</strong></a>
+            <BR>
+			<span class="leftNavSub">
+                <a class="navbar-blue" target=_parent href="http://otr.cfo.dc.gov/page/real-property-tax-bills-due-dates-and-delayed-bills">Property Tax Bills</a><BR>  
+                <a class="navbar-blue" target=_parent href="http://otr.cfo.dc.gov/page/real-property-tax-rates">Property Tax Rates<BR>&nbsp;&nbsp;and Calculation</a><BR>
+                <a class="navbar-blue" target=_parent href="http://otr.cfo.dc.gov/page/real-property-assessment-process-0">Property Assessment<BR>&nbsp;&nbsp;Process</a><BR>
+                <a class="navbar-blue" target=_parent href="http://otr.cfo.dc.gov/page/real-property-assessment-appeals">Property Assessment<BR>&nbsp;&nbsp;Appeals</a><BR>
+                <a class="navbar-blue" target=_parent href="http://otr.cfo.dc.gov/page/other-credits-and-deductions">Tax Relief Credits</a><BR>
+                <a class="navbar-blue" target=_parent href="https://www.taxpayerservicecenter.com/RP_Search.jsp?search_type=Sales">Search Real Property<BR>&nbsp;&nbsp;Sales Database</a><BR>
+                <a class="navbar-blue" target=_blank href="http://dcgis.maps.arcgis.com/apps/webappviewer/index.html?id=9a5c11c11dd347cc9c05d64499cc98ee">OTR Real Property <BR> &nbsp;&nbsp; Web Map</a><BR> <!-- SCR8176 -->               				
+				<BR>
+			</span>
+			<br>
+		</span>
+	</div>	
+</TD>
+				<!-- End of left nav bar -->
+				<!-- Beginning of your work space -->
+				<TD class="contentLeft"><!-- Content Table -->
+					<div class="contentPadding">
+					<form  action="./RP_Results.jsp" method="post" id=SearchForm name=SearchForm  onSubmit="return validateForm(document.SearchForm)">
+						<INPUT TYPE="hidden" NAME="txtPremiseAddr" VALUE=""> 
+						<table WIDTH="100%" BORDER="0" CELLSPACING="0" CELLPADDING="0">
+							<tr>
+								<td>
+									<table width="100%">
+										<tr valign="baseline">
+											<td><B><FONT color=#001864 face=Arial size=4>Find Your Real Property - Online Bill Payment</FONT></B>
+											<br/><div class="pageHeadingBar"></div><br/> <!-- SCR 6845 -->
+											</td>
+										</tr>
+
+
+										<!-- START     SCR 8152 : Design In Progress : RPTA - NON-QA: warning note on website during billing -->
+										<!--
+										<tr>
+											<td width="100%">
+												<FONT face="Arial" size="3" color="red">
+												<b>
+													Webpage Maintenance Notice: <br/>
+													Due to the preparation efforts for the upcoming 2017 second half Real Property Tax billing cycle, the webpage data update is temporarily on hold from July 25, 2017 through August 13, 2017.
+												</b>
+												</FONT>
+											</td>
+										</tr>
+										-->
+										<!-- END    SCR 8152 : Design In Progress : RPTA - NON-QA: warning note on website during billing -->
+
+										<tr>
+											<td width="100%">
+												<FONT face=Arial size=2>
+												<br/>
+												<b>
+												<em>Enter at least one search item in the boxes below. The best results will be achieved by entering only the Property ID. <em> When searching by street address, leave the thoroughfare field empty if you are not getting a result. 
+												</em>
+												</b>
+												<br/>
+												</FONT>
+											</td>
+										</tr>
+									
+									</table>
+									<br>
+									<table width="70%" align="left" border="1" cellpadding="3" cellspacing="0" bordercolor="#0000FF" bgcolor="#E1ECF2"> <!-- #ECFFF #E1ECF2 -->
+										<tr bordercolor="#E1ECF2">
+											<td colspan="2">
+												<font face=arial size=2><p> Click <a onclick="popWin4('RP_SearchHelp.html', 550, 540, 'resize')"> <img border="0" src="images/help_icon.gif"></a> for tips on how to use the search page. <br/> </p> <br/> </font>
+											</td>
+										</tr>
+										<tr bordercolor="#E1ECF2">
+											<td vAlign=center><STRONG><FONT face=Verdana size=1>Property ID:</FONT></STRONG></TD>
+											<td>
+												<table>
+													<tr>
+														<td vAlign=center><STRONG><FONT face=Verdana size=1>Square:</FONT></STRONG></td>
+														<td vAlign=center><INPUT TYPE="TEXT" maxLength=4 size=6 name=txtSquare> </td>
+														<td vAlign=center><STRONG><FONT face=Verdana size=1>&nbsp;&nbsp;Suffix:</FONT></STRONG></td>
+														<td vAlign=center><INPUT TYPE= "TEXT" maxLength=4 size=6 name=txtSuffix> </td>
+														<td vAlign=center><STRONG><FONT face=Verdana size=1>&nbsp;&nbsp;Lot:</FONT></STRONG></td>
+														<td><INPUT TYPE="TEXT" maxLength=4 size=6 name=txtLot> </td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+										<tr bordercolor="#E1ECF2">
+											<td> &nbsp; </td>
+											<td> &nbsp; <br/> </td>										
+										</tr>
+										<tr bordercolor="#E1ECF2">
+											<TD vAlign=center><STRONG><FONT face=Verdana size=1>Premise Address:</FONT></STRONG></TD>
+											<TD>
+												<TABLE>
+													<tr>
+														<td vAlign=center><INPUT TYPE="TEXT" maxLength=15 size=8 name=txtBuildingNumber onkeypress="return checkStreetNumberChar(event);"></td>
+														<td vAlign=center><INPUT TYPE= "TEXT" maxLength=25 size=15 name=txtStreetName onkeypress="return checkStreetNameChar(event);"></td>
+														<td>
+															<SELECT name=txtThoroughfare>
+																<OPTION value="" selected>- -</option>
+																<OPTION value="ALY">ALY</option>
+																<OPTION value="AV">AV</option>
+																<OPTION value="BLVD">BLVD</option>
+																<OPTION value="CIR">CIR</option>
+																<OPTION value="CT">CT</option>
+																<OPTION value="DR">DR</option>
+																<OPTION value="FWY">FWY</option>
+																<OPTION value="LA">LA</option>
+																<OPTION value="PKWY">PKWY</option>
+																<OPTION value="PL">PL</option>
+																<OPTION value="PLAZA">PLAZA</option>
+																<OPTION value="RD">RD</option>		
+																<OPTION value="SQ">SQ</option>				
+																<OPTION value="ST">ST</option>         				
+																<OPTION value="TR">TR</option>				
+																<OPTION value="WAY">WAY</option>  				
+															</SELECT>
+														</td>
+														<td>
+															<SELECT name=txtQuadrant>
+																<OPTION value="" selected>- -</option> 
+																<OPTION value="NW">NW</option> 
+																<OPTION value="NE">NE</option> 
+																<OPTION value="SW">SW</option> 
+																<OPTION value="SE">SE</option> 
+															</SELECT>                
+														</td>
+													</tr>
+													<tr>
+														<td><span class="footnote">Street #</span></td>
+														<td><span class="footnote">Street Name</span></td>
+														<td><span class="footnote">Thoroughfare</span></td>
+														<td><span class="footnote">Quadrant</span></td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+										<tr bordercolor="#E1ECF2">
+											<td vAlign=center ><STRONG><FONT face=Verdana size=1>Neighborhood:</FONT></STRONG> </TD>
+											<td>
+												<TABLE>
+													<TR>
+														<TD  valign=center>
+															<SELECT name=selectNbhdCode onchange="changeIframe()">
+																<OPTION value="" selected></OPTION>
+															
+				           										<OPTION value=1>American University Park</OPTION>
+															
+				           										<OPTION value=2>Anacostia</OPTION>
+															
+				           										<OPTION value=3>Barry Farms</OPTION>
+															
+				           										<OPTION value=4>Berkley</OPTION>
+															
+				           										<OPTION value=68>Bolling AFB & Naval Research</OPTION>
+															
+				           										<OPTION value=5>Brentwood</OPTION>
+															
+				           										<OPTION value=6>Brightwood</OPTION>
+															
+				           										<OPTION value=7>Brookland</OPTION>
+															
+				           										<OPTION value=8>Burleith</OPTION>
+															
+				           										<OPTION value=9>Capitol Hill</OPTION>
+															
+				           										<OPTION value=10>Central</OPTION>
+															
+				           										<OPTION value=11>Chevy Chase</OPTION>
+															
+				           										<OPTION value=12>Chillum</OPTION>
+															
+				           										<OPTION value=13>Cleveland Park</OPTION>
+															
+				           										<OPTION value=14>Colonial Village</OPTION>
+															
+				           										<OPTION value=15>Columbia Heights</OPTION>
+															
+				           										<OPTION value=16>Congress Heights</OPTION>
+															
+				           										<OPTION value=17>Crestwood</OPTION>
+															
+				           										<OPTION value=69>D.C. Village</OPTION>
+															
+				           										<OPTION value=18>Deanwood</OPTION>
+															
+				           										<OPTION value=19>Eckington</OPTION>
+															
+				           										<OPTION value=20>Foggy Bottom</OPTION>
+															
+				           										<OPTION value=21>Forest Hills</OPTION>
+															
+				           										<OPTION value=70>Fort Drive</OPTION>
+															
+				           										<OPTION value=22>Fort Dupont Park</OPTION>
+															
+				           										<OPTION value=66>Fort Lincoln</OPTION>
+															
+				           										<OPTION value=74>Fort McNair</OPTION>
+															
+				           										<OPTION value=23>Foxhall</OPTION>
+															
+				           										<OPTION value=24>Garfield</OPTION>
+															
+				           										<OPTION value=25>Georgetown</OPTION>
+															
+				           										<OPTION value=26>Glover Park</OPTION>
+															
+				           										<OPTION value=71>Glover-Archbold Parkway</OPTION>
+															
+				           										<OPTION value=27>Hawthorne</OPTION>
+															
+				           										<OPTION value=28>Hillcrest</OPTION>
+															
+				           										<OPTION value=29>Kalorama</OPTION>
+															
+				           										<OPTION value=30>Kent</OPTION>
+															
+				           										<OPTION value=31>LeDroit Park</OPTION>
+															
+				           										<OPTION value=32>Lily Ponds</OPTION>
+															
+				           										<OPTION value=72>Mall</OPTION>
+															
+				           										<OPTION value=33>Marshall Heights</OPTION>
+															
+				           										<OPTION value=34>Massachusetts Av Heights</OPTION>
+															
+				           										<OPTION value=35>Michigan Park</OPTION>
+															
+				           										<OPTION value=36>Mount Pleasant</OPTION>
+															
+				           										<OPTION value=65>National Arboretum</OPTION>
+															
+				           										<OPTION value=61>National Zoological Park</OPTION>
+															
+				           										<OPTION value=63>North Anacostia Park</OPTION>
+															
+				           										<OPTION value=37>North Cleveland Park</OPTION>
+															
+				           										<OPTION value=60>North Rock Creek Park</OPTION>
+															
+				           										<OPTION value=38>Observatory Circle</OPTION>
+															
+				           										<OPTION value=39>Old City I</OPTION>
+															
+				           										<OPTION value=40>Old City II</OPTION>
+															
+				           										<OPTION value=41>Palisades</OPTION>
+															
+				           										<OPTION value=42>Petworth</OPTION>
+															
+				           										<OPTION value=44>R.L.A. NE</OPTION>
+															
+				           										<OPTION value=45>R.L.A. NW</OPTION>
+															
+				           										<OPTION value=46>R.L.A. SW</OPTION>
+															
+				           										<OPTION value=59>Rail Road Tracks</OPTION>
+															
+				           										<OPTION value=43>Randle Heights</OPTION>
+															
+				           										<OPTION value=47>Riggs Park</OPTION>
+															
+				           										<OPTION value=48>Shepherd Park</OPTION>
+															
+				           										<OPTION value=49>Sixteenth Street Heights</OPTION>
+															
+				           										<OPTION value=64>South Anacostia Park</OPTION>
+															
+				           										<OPTION value=62>South Rock Creek Park</OPTION>
+															
+				           										<OPTION value=50>Spring Valley</OPTION>
+															
+				           										<OPTION value=67>St. Elizabeths Hospital</OPTION>
+															
+				           										<OPTION value=51>Takoma</OPTION>
+															
+				           										<OPTION value=52>Trinidad</OPTION>
+															
+				           										<OPTION value=53>Wakefield</OPTION>
+															
+				           										<OPTION value=73>Washington Navy Yard</OPTION>
+															
+				           										<OPTION value=54>Wesley Heights</OPTION>
+															
+				           										<OPTION value=55>Woodley</OPTION>
+															
+				           										<OPTION value=56>Woodridge</OPTION>
+															
+															</SELECT>
+														</TD>
+														<TD vAlign=center align=left><STRONG><FONT face=Verdana size=1>&nbsp;&nbsp;Sub-Neighborhood:</FONT></STRONG></TD>
+														<TD vAlign=center><div width="200" height="30" id=subNBHDFrame></div>   </TD>
+													</TR>
+												</TABLE>
+											</td>
+										</tr>
+										<tr bordercolor="#E1ECF2">
+										  <td vAlign=center><STRONG><FONT face=Verdana size=1>Mortgage Co.:</FONT></strong></td>
+										  <td class=StdBlank width="100%">
+												 <SELECT name=selectMortgageCode>
+													 <OPTION value="" selected></OPTION>
+													
+														<OPTION value=237>1ST AMERICAN TAX SERVICE        </OPTION>
+															
+														<OPTION value=362>1ST NATIONWIDE MORTGAGE         </OPTION>
+															
+														<OPTION value=386>AAMES HOME LOAN                 </OPTION>
+															
+														<OPTION value=322>ABN AMRO MORTGAGE GROUP INC     </OPTION>
+															
+														<OPTION value=205>ACACIA FEDERAL SAVINGS BANK     </OPTION>
+															
+														<OPTION value=311>ACCUBANK MORTAGE                </OPTION>
+															
+														<OPTION value=160>ADVANTA MORTGAGE USA            </OPTION>
+															
+														<OPTION value=060>AEGON USA REAL ESTATE SERVICES  </OPTION>
+															
+														<OPTION value=335>AFI MORTGAGE CORP               </OPTION>
+															
+														<OPTION value=407>ALLFIRST BANK                   </OPTION>
+															
+														<OPTION value=179>ALLIANCE MORTGAGE COMPANY       </OPTION>
+															
+														<OPTION value=080>AMERICAN FEDERAL SAVINGS BANK   </OPTION>
+															
+														<OPTION value=231>AMERICAN RESIDENTIAL MTG CORP   </OPTION>
+															
+														<OPTION value=343>AMERICAN SAVINGS BANK           </OPTION>
+															
+														<OPTION value=236>AMERICAN SAVINGS OF FLORIDA     </OPTION>
+															
+														<OPTION value=417>AMERIQUEST MORTGAGE COMPANY     </OPTION>
+															
+														<OPTION value=402>AMMES FINANCIAL CORP            </OPTION>
+															
+														<OPTION value=104>AMOCO OIL CO                    </OPTION>
+															
+														<OPTION value=037>AMSOUTH MORTGAGE COMPANY INC    </OPTION>
+															
+														<OPTION value=304>AMSOUTH MORTGAGE OF FLORIDA     </OPTION>
+															
+														<OPTION value=103>ASSOCIATES NATIONAL MORTGAGE    </OPTION>
+															
+														<OPTION value=254>ASSOCIATES NATIONAL MORTGAGE    </OPTION>
+															
+														<OPTION value=142>ASTORIA FED SAVINGS & LOAN ASSOC</OPTION>
+															
+														<OPTION value=183>ATLANTIC MORTGAGE & INVESTMENT  </OPTION>
+															
+														<OPTION value=334>AURORA LOAN SERVICES            </OPTION>
+															
+														<OPTION value=146>AURORA LOAN SERVICES            </OPTION>
+															
+														<OPTION value=001>AVALON PROPERTIES, INC          </OPTION>
+															
+														<OPTION value=017>B&O RAILROAD TAX DEPT-J910      </OPTION>
+															
+														<OPTION value=079>BANC ONE MORTGAGE CORP          </OPTION>
+															
+														<OPTION value=166>BANK FUND STAFF F C U           </OPTION>
+															
+														<OPTION value=003>BANK OF AMERICA                 </OPTION>
+															
+														<OPTION value=149>BANK OF AMERICA                 </OPTION>
+															
+														<OPTION value=020>BANK OF AMERICA CYPRESS         </OPTION>
+															
+														<OPTION value=164>BANK OF AMERICA/ARBOR           </OPTION>
+															
+														<OPTION value=312>BANK OF AMERICA/COMMERCIAL MLS  </OPTION>
+															
+														<OPTION value=150>BANK UNITED OF TEXAS, FSB       </OPTION>
+															
+														<OPTION value=383>BANKATLANTIC, F.S.B.            </OPTION>
+															
+														<OPTION value=397>BANKATLANTIC/BANK SERVICE CENTER</OPTION>
+															
+														<OPTION value=065>BANKERS SAVINGS                 </OPTION>
+															
+														<OPTION value=170>BANKUNITED, FSB                 </OPTION>
+															
+														<OPTION value=114>BARNETT MORTGAGE COMPANY        </OPTION>
+															
+														<OPTION value=088>BB&T MORTGAGE                   </OPTION>
+															
+														<OPTION value=040>BELL ATLANTIC COMPANY           </OPTION>
+															
+														<OPTION value=332>BEVERLY HILLS SECURITIES CO     </OPTION>
+															
+														<OPTION value=378>BISMARCK LIMITED LIABILITY CO   </OPTION>
+															
+														<OPTION value=116>BISMARCK LLC                    </OPTION>
+															
+														<OPTION value=180>BOATMEN'S NATIONAL MORTGAGE CO  </OPTION>
+															
+														<OPTION value=331>BOK MORTGAGE                    </OPTION>
+															
+														<OPTION value=096>BRAWNER COMPANY INC             </OPTION>
+															
+														<OPTION value=025>CAFRITZ COMPANY                 </OPTION>
+															
+														<OPTION value=162>CALIFORNIA FEDERAL BANK         </OPTION>
+															
+														<OPTION value=117>CAPITAL CITY MORTGAGE CORP      </OPTION>
+															
+														<OPTION value=016>CAPRI CAPITAL                   </OPTION>
+															
+														<OPTION value=393>CAPRI MORTGAGE CAPITAL          </OPTION>
+															
+														<OPTION value=286>CENLAR FEDERAL SAVINGS BANK     </OPTION>
+															
+														<OPTION value=264>CENTEREBANK MORTGAGE CO         </OPTION>
+															
+														<OPTION value=411>CENTTURA BANK                   </OPTION>
+															
+														<OPTION value=156>CENTURY BANK, FSB               </OPTION>
+															
+														<OPTION value=389>CENTURY NATIONAL BANK           </OPTION>
+															
+														<OPTION value=282>CHARTER ONE MORTGAGE CORP       </OPTION>
+															
+														<OPTION value=296>CHASE HOME MORTGAGE             </OPTION>
+															
+														<OPTION value=032>CHASE MANHATTAN MORTGAGE CORP   </OPTION>
+															
+														<OPTION value=300>CHASE MANHATTAN MORTGAGE CORP   </OPTION>
+															
+														<OPTION value=247>CHASE MANHATTAN MORTGAGE CORP   </OPTION>
+															
+														<OPTION value=267>CHASE MANHATTAN MORTGAGE CORP   </OPTION>
+															
+														<OPTION value=288>CHEVY CHASE FEDERAL SAVINGS BK  </OPTION>
+															
+														<OPTION value=325>CITIBANK ARIZONA                </OPTION>
+															
+														<OPTION value=305>CITICORP MORTGAGE               </OPTION>
+															
+														<OPTION value=085>CITIFINANCIAL                   </OPTION>
+															
+														<OPTION value=244>CITIMORTGAGE INC.               </OPTION>
+															
+														<OPTION value=038>CITIZENS BANK OF MARYLAND       </OPTION>
+															
+														<OPTION value=225>CITIZENS MORTGAGE CORP          </OPTION>
+															
+														<OPTION value=131>CITIZENS MORTGAGE CORP          </OPTION>
+															
+														<OPTION value=202>COLONIAL BANK                   </OPTION>
+															
+														<OPTION value=023>COLONIAL MORTGAGE CORP          </OPTION>
+															
+														<OPTION value=115>COLONIAL SAVINGS                </OPTION>
+															
+														<OPTION value=095>COLUMBIA NATIONAL INCORPORATED  </OPTION>
+															
+														<OPTION value=211>COMERICA BANK-DETROIT           </OPTION>
+															
+														<OPTION value=041>COMMERCIAL FEDERAL MORTGAGE     </OPTION>
+															
+														<OPTION value=355>COMNET MORTGAGE SERVICES INC    </OPTION>
+															
+														<OPTION value=024>CONTIMORTGAGE CORPORATION       </OPTION>
+															
+														<OPTION value=315>COUNTRYWIDE                     </OPTION>
+															
+														<OPTION value=233>COUNTRYWIDE FUNDING CORP        </OPTION>
+															
+														<OPTION value=130>COUNTRYWIDE FUNDING CORP        </OPTION>
+															
+														<OPTION value=222>CREDIT UNION MORTGAGE ASSN      </OPTION>
+															
+														<OPTION value=194>CROSSLAND MTG CORP              </OPTION>
+															
+														<OPTION value=039>CROWN BANK                      </OPTION>
+															
+														<OPTION value=406>CUSO MORTGAGE                   </OPTION>
+															
+														<OPTION value=124>D & N SAVINGS BANK              </OPTION>
+															
+														<OPTION value=366>DEMERS REAL ESATE INC           </OPTION>
+															
+														<OPTION value=328>DEPOSIT GUARANTY MORTGAGE COPR  </OPTION>
+															
+														<OPTION value=365>DEPT OF VETERANS AFFAIRS        </OPTION>
+															
+														<OPTION value=364>DEPT OF VETERANS AFFAIRS        </OPTION>
+															
+														<OPTION value=287>DIME SAVINGS BANK OF NEW YORK   </OPTION>
+															
+														<OPTION value=316>DOVENMUEHLE MORTGAGE INC        </OPTION>
+															
+														<OPTION value=110>DOVENMUEHLE MORTGAGE INC        </OPTION>
+															
+														<OPTION value=368>DP SERVICE CORP                 </OPTION>
+															
+														<OPTION value=048>DREYFUSS BROTHERS INC           </OPTION>
+															
+														<OPTION value=018>DUNPHY PROPERTIES               </OPTION>
+															
+														<OPTION value=381>EASLEY, MCCALEB & ASSOCIATES    </OPTION>
+															
+														<OPTION value=375>EASTERN MORTGAGE SERVICES I     </OPTION>
+															
+														<OPTION value=219>EASTERN SAVINGS BANK            </OPTION>
+															
+														<OPTION value=260>EASTERN SAVINGS BANK            </OPTION>
+															
+														<OPTION value=317>EMC MORTGAGE CORP               </OPTION>
+															
+														<OPTION value=284>EMPIRE OF AMER RL CREDIT CORP   </OPTION>
+															
+														<OPTION value=324>EQUITABLE FEDERAL SAVINGS BANK  </OPTION>
+															
+														<OPTION value=148>ESSEX MORTGAGE CORP             </OPTION>
+															
+														<OPTION value=203>EXXON COMPANY  USA              </OPTION>
+															
+														<OPTION value=252>FARMER'S & MECHANICS NAT'L BANK </OPTION>
+															
+														<OPTION value=318>FBS MORTGAGE MN                 </OPTION>
+															
+														<OPTION value=129>FIDELITY BOND & MORTGAGE CO     </OPTION>
+															
+														<OPTION value=377>FIDELITY NATIONAL TAX SERVICE   </OPTION>
+															
+														<OPTION value=147>FIFTH THIRD MORTGAGE CORP       </OPTION>
+															
+														<OPTION value=045>FIRST AMERICAN BANK, SSB        </OPTION>
+															
+														<OPTION value=239>FIRST AMERICAN TAX SERVICE      </OPTION>
+															
+														<OPTION value=416>FIRST AMERICAN TAX VALUATION    </OPTION>
+															
+														<OPTION value=347>FIRST BANK MORTGAGE             </OPTION>
+															
+														<OPTION value=026>FIRST CALIFORNIA MORTG CO       </OPTION>
+															
+														<OPTION value=346>FIRST COMMERCIAL MORTGAGE CO    </OPTION>
+															
+														<OPTION value=385>FIRST COMMERCIAL MORTGAGE CO    </OPTION>
+															
+														<OPTION value=013>FIRST FEDERAL S&L OF ROCHESTER  </OPTION>
+															
+														<OPTION value=319>FIRST FIDELITY BANK NA          </OPTION>
+															
+														<OPTION value=191>FIRST NATIONWIDE MORTGAGE       </OPTION>
+															
+														<OPTION value=255>FIRST NATIONWIDE MORTGAGE CORP  </OPTION>
+															
+														<OPTION value=140>FIRST NATIONWIDE MORTGAGE CORP  </OPTION>
+															
+														<OPTION value=419>FIRST PRESTON FORECLOSURE       </OPTION>
+															
+														<OPTION value=044>FIRST TOWN MORTGAGE CO          </OPTION>
+															
+														<OPTION value=107>FIRST UNION BANK-COMMERCIAL     </OPTION>
+															
+														<OPTION value=292>FIRST UNION MORTGAGE            </OPTION>
+															
+														<OPTION value=091>FIRST VIRGINIA MORTGAGE CO      </OPTION>
+															
+														<OPTION value=404>FIRSTAR HOME MORTGAGE CORP      </OPTION>
+															
+														<OPTION value=413>FIRSTAR HOME MORTGAGE/GNMA      </OPTION>
+															
+														<OPTION value=420>FITZGERALD PROPERTIES REAL ESTAT</OPTION>
+															
+														<OPTION value=066>FLAGSTAR BANK, FSB              </OPTION>
+															
+														<OPTION value=070>FLEET MORTGAGE CORP             </OPTION>
+															
+														<OPTION value=408>FLEET MORTGAGE GROUP            </OPTION>
+															
+														<OPTION value=133>FLEET REAL ESTATE FUNDING CORP  </OPTION>
+															
+														<OPTION value=050>FLOYD E DAVIS COMPANY           </OPTION>
+															
+														<OPTION value=277>FRANK EMMET REAL ESTATE         </OPTION>
+															
+														<OPTION value=299>FRANKLIN MORTGAGE CAPITAL       </OPTION>
+															
+														<OPTION value=059>FRED A SMITH CO                 </OPTION>
+															
+														<OPTION value=157>FSB MORTGAGE OF LITTLE ROCK     </OPTION>
+															
+														<OPTION value=356>FSB MORTGAGE OF LITTLE ROCK     </OPTION>
+															
+														<OPTION value=228>GE CAPITAL HOME EQUITY SERVS    </OPTION>
+															
+														<OPTION value=055>GE CAPITAL MORTGAGE SERVICES    </OPTION>
+															
+														<OPTION value=073>GLENDALE FEDERAL BANK-RESIDENT  </OPTION>
+															
+														<OPTION value=348>GMAC COMMERICIAL MORTGAGE       </OPTION>
+															
+														<OPTION value=084>GMAC MORT CORP OF IOWA          </OPTION>
+															
+														<OPTION value=132>GMAC MORTGAGE CORP OF IOWA      </OPTION>
+															
+														<OPTION value=394>GN MORTGAGE                     </OPTION>
+															
+														<OPTION value=396>GREATER ATLANTIC SAVINGS BANK   </OPTION>
+															
+														<OPTION value=344>GREENPOINT MORTGAGE CORP        </OPTION>
+															
+														<OPTION value=167>GREENTREE MORTGAGE COMPANY LP   </OPTION>
+															
+														<OPTION value=422>GREYSTONE SERVICING CORP. INC   </OPTION>
+															
+														<OPTION value=120>GUARANTY BANK                   </OPTION>
+															
+														<OPTION value=042>GUILD MORTGAGE COMPANY          </OPTION>
+															
+														<OPTION value=081>H A GILL & SON INC              </OPTION>
+															
+														<OPTION value=196>H G SMITHY & COMPANY            </OPTION>
+															
+														<OPTION value=372>HARBOR FINANCIAL MORT CORP      </OPTION>
+															
+														<OPTION value=276>HOME REALTY INCORPORATED        </OPTION>
+															
+														<OPTION value=306>HOMEBANC FEDERAL SAVINGS BANK   </OPTION>
+															
+														<OPTION value=314>HOMECOMING FINANCIAL NETWORK    </OPTION>
+															
+														<OPTION value=271>HOMESIDE LENDING INC C/O TRET   </OPTION>
+															
+														<OPTION value=293>HOMESIDE LENDING INC-SAN ANTON  </OPTION>
+															
+														<OPTION value=390>HOMESIDE LENDING INC.           </OPTION>
+															
+														<OPTION value=200>HORNING BROTHERS                </OPTION>
+															
+														<OPTION value=329>HOUSEHOLD FINANCIAL SERVICES    </OPTION>
+															
+														<OPTION value=199>HOUSEHOLD FINANCIAL SERVICES    </OPTION>
+															
+														<OPTION value=235>HOUSEHOLD MORTGAGE SERVICE      </OPTION>
+															
+														<OPTION value=128>HOWARD UNIVERSITY ANNEX 2-119   </OPTION>
+															
+														<OPTION value=392>HSBC                            </OPTION>
+															
+														<OPTION value=221>HUNTINGTON MORTGAGE CO          </OPTION>
+															
+														<OPTION value=010>IDB-IIC FEDERAL CREDIT UNION    </OPTION>
+															
+														<OPTION value=036>INDEPENDENCE FEDERAL SAVINGS    </OPTION>
+															
+														<OPTION value=121>INDEPENDENCE FINANCIAL CORP     </OPTION>
+															
+														<OPTION value=087>INDUSTRIAL BANK OF WASHINGTON   </OPTION>
+															
+														<OPTION value=193>INLAND MORTGAGE COMPANY         </OPTION>
+															
+														<OPTION value=320>INTEGRA MORTGAGE CO             </OPTION>
+															
+														<OPTION value=012>ITT RESIDENTIAL CAPITAL CORP    </OPTION>
+															
+														<OPTION value=248>J B TIFFEY & SONS               </OPTION>
+															
+														<OPTION value=022>J I KISLAK MORTGAGE CORP        </OPTION>
+															
+														<OPTION value=290>J I KISLAK SPECIALIZED SERVICE  </OPTION>
+															
+														<OPTION value=263>JAMES B NUTTER & COMPANY        </OPTION>
+															
+														<OPTION value=207>JG REALTY                       </OPTION>
+															
+														<OPTION value=069>JOHN HANCOCK REAL ESTATE        </OPTION>
+															
+														<OPTION value=337>KNUTSON MORTGAGE CORP           </OPTION>
+															
+														<OPTION value=216>LAFAYETT FEDERAL CREDIT UNION   </OPTION>
+															
+														<OPTION value=052>LASALLE HOME MORTGAGE CORP      </OPTION>
+															
+														<OPTION value=034>LEHMAN BROTHERS BANK, FSB       </OPTION>
+															
+														<OPTION value=291>LEND-MOR CORP/FIRST TOWN MOR    </OPTION>
+															
+														<OPTION value=224>LERETA CORP                     </OPTION>
+															
+														<OPTION value=127>LIBERTY LENDING SERVICES INC    </OPTION>
+															
+														<OPTION value=374>LIBERTY MORTGAGE                </OPTION>
+															
+														<OPTION value=062>LIFE SAVINGS BANK               </OPTION>
+															
+														<OPTION value=152>LITTON LOAN SERVICING           </OPTION>
+															
+														<OPTION value=307>LOAN AMERICA FINANCIAL CORP     </OPTION>
+															
+														<OPTION value=007>LOAN SERVICING CORPORATION      </OPTION>
+															
+														<OPTION value=077>LSI FINANCIAL GROUP             </OPTION>
+															
+														<OPTION value=135>LUSTINE REALTY COMPANY          </OPTION>
+															
+														<OPTION value=082>M & I MORTGAGE CORP             </OPTION>
+															
+														<OPTION value=145>M W M PROPERTIES                </OPTION>
+															
+														<OPTION value=279>M&T MORTGAGE CORPORATION        </OPTION>
+															
+														<OPTION value=351>M&T MORTGAGE CORPORATION        </OPTION>
+															
+														<OPTION value=057>MAIN LINE FEDERAL BANK          </OPTION>
+															
+														<OPTION value=144>MARINE MIDLAND BANK             </OPTION>
+															
+														<OPTION value=154>MARKET STREET MORTGAGE CORP     </OPTION>
+															
+														<OPTION value=204>MARYLAND FEDERAL S & L ASSOC    </OPTION>
+															
+														<OPTION value=405>MATRIX FINANCIAL CORPORATION    </OPTION>
+															
+														<OPTION value=350>MATRIX FINANCIAL SERVICES CO    </OPTION>
+															
+														<OPTION value=136>MC DONALDS CORPORATION          </OPTION>
+															
+														<OPTION value=168>MCCAUGHAN MORTGAGE CO INC       </OPTION>
+															
+														<OPTION value=229>MELLON MORTGAGE CO-DENVER       </OPTION>
+															
+														<OPTION value=289>MELLON MORTGAGE COMPANY         </OPTION>
+															
+														<OPTION value=188>MERCANTILE MORTGAGE             </OPTION>
+															
+														<OPTION value=068>MERIDIAN MORTGAGE CORP          </OPTION>
+															
+														<OPTION value=361>MERRILL LYNCH AMORTISING        </OPTION>
+															
+														<OPTION value=100>MERRILL LYNCH PRIME FIRST       </OPTION>
+															
+														<OPTION value=266>METROPOLITAN SAVINGS & LOAN     </OPTION>
+															
+														<OPTION value=326>MIAMI VALLEY BANK               </OPTION>
+															
+														<OPTION value=370>MIDLAND LOAN SERVICES           </OPTION>
+															
+														<OPTION value=367>MIDLAND LOAN SERVICES, L.P.     </OPTION>
+															
+														<OPTION value=125>MIDLAND MORTGAGE #2             </OPTION>
+															
+														<OPTION value=257>MIDLAND MORTGAGE ACQ            </OPTION>
+															
+														<OPTION value=310>MIDLAND MORTGAGE COMPANY        </OPTION>
+															
+														<OPTION value=227>MILLICENT CHATEL ASSOC          </OPTION>
+															
+														<OPTION value=155>MM & G, INC.                    </OPTION>
+															
+														<OPTION value=256>MNC MORTGAGE CORP               </OPTION>
+															
+														<OPTION value=004>MOLTON ALLEN & WILLIAMS L       </OPTION>
+															
+														<OPTION value=011>MORRIS MANAGEMENT INC           </OPTION>
+															
+														<OPTION value=234>MORTGAGE ACCESS CORPORATION     </OPTION>
+															
+														<OPTION value=102>MOUNTAIN STATES MORTGAGE CENT   </OPTION>
+															
+														<OPTION value=008>MUTUAL MORTGAGE CORP., ISA/OA   </OPTION>
+															
+														<OPTION value=078>NASA FEDERAL CREDIT UNION       </OPTION>
+															
+														<OPTION value=273>NATIONAL CITY MORTGAGE CO       </OPTION>
+															
+														<OPTION value=019>NATIONAL MORTGAGE CORPORATION   </OPTION>
+															
+														<OPTION value=400>NATIONAL TAX SEARCH, LLC        </OPTION>
+															
+														<OPTION value=029>NATIONS CREDIT HOME EQUITY      </OPTION>
+															
+														<OPTION value=043>NATIONSBANC MORTGAGE CO         </OPTION>
+															
+														<OPTION value=005>NATIONSBANK, N.A.               </OPTION>
+															
+														<OPTION value=214>NATIONWIDE HOME MORTGAGE CO     </OPTION>
+															
+														<OPTION value=357>NATWEST HOME MORTGAGE           </OPTION>
+															
+														<OPTION value=171>NAVY FEDERAL CREDIT UNION       </OPTION>
+															
+														<OPTION value=302>NBD MORTGAGE COMPANY            </OPTION>
+															
+														<OPTION value=186>NORTH AMERICAN MORTGAGE         </OPTION>
+															
+														<OPTION value=098>NORTH AMERICAN MORTGAGE CO      </OPTION>
+															
+														<OPTION value=353>NORTHWEST MTG, INC              </OPTION>
+															
+														<OPTION value=054>NORWEST MORTGAGE                </OPTION>
+															
+														<OPTION value=395>NOVASTAR MORTGAGE INC           </OPTION>
+															
+														<OPTION value=278>NVR MORTGAGE LP                 </OPTION>
+															
+														<OPTION value=158>OBA FEDERAL S & L ASSOC         </OPTION>
+															
+														<OPTION value=002>OCWEN FEDERAL BANK, FSB         </OPTION>
+															
+														<OPTION value=403>OHIO SAVINGS BANK               </OPTION>
+															
+														<OPTION value=410>OKMS                            </OPTION>
+															
+														<OPTION value=076>OLD KENT BANK AND TRUST CO      </OPTION>
+															
+														<OPTION value=412>OLD KENT MORTGAGE SERVICES INC  </OPTION>
+															
+														<OPTION value=053>OLYMPIA MORTGAGE CORP           </OPTION>
+															
+														<OPTION value=027>OLYMPIA MORTGAGE CORP           </OPTION>
+															
+														<OPTION value=035>OLYMPUS BANK FSB                </OPTION>
+															
+														<OPTION value=342>OPTION ONE MORTGAGE CORP        </OPTION>
+															
+														<OPTION value=391>PARKVALE SAVINGS BANK           </OPTION>
+															
+														<OPTION value=414>PENAGON FEDERAL CREDIT UNION    </OPTION>
+															
+														<OPTION value=139>PHH U S MORTGAGE CORPORATION    </OPTION>
+															
+														<OPTION value=190>PHH US MORTGAGE SERVICES CORP   </OPTION>
+															
+														<OPTION value=298>PHIFER REALTY INC               </OPTION>
+															
+														<OPTION value=094>PINNACLE REAL ESTATE TAX SERV   </OPTION>
+															
+														<OPTION value=321>PMAC UNION PLANTERS             </OPTION>
+															
+														<OPTION value=030>PNC MORTGAGE COMPANY            </OPTION>
+															
+														<OPTION value=261>PNC MORTGAGE CORP OF AMERICA    </OPTION>
+															
+														<OPTION value=165>POTOMAC ELECTRIC POWER CO       </OPTION>
+															
+														<OPTION value=269>PRESIDENTIAL SAVINGS ASSOC      </OPTION>
+															
+														<OPTION value=399>PRESIDENTIAL SAVINGS BANK       </OPTION>
+															
+														<OPTION value=083>PRINCIPAL MUTUAL LIFE INS       </OPTION>
+															
+														<OPTION value=242>PROVIDENT BANK OF MARYLAND      </OPTION>
+															
+														<OPTION value=398>PROVIDENT SAVINGS BANK          </OPTION>
+															
+														<OPTION value=113>PRUDENTIAL HOME MORTGAGE CO     </OPTION>
+															
+														<OPTION value=208>PRUDENTIAL HOME MTG/AMERICA'S   </OPTION>
+															
+														<OPTION value=249>PULTE MORTGAGE CORPORATION      </OPTION>
+															
+														<OPTION value=358>REGIONS MORTGAGE COMPANY INC    </OPTION>
+															
+														<OPTION value=105>REILLY MORTGAGE GROUP INC       </OPTION>
+															
+														<OPTION value=021>RELIASTAR MORTGAGE CORPORATION  </OPTION>
+															
+														<OPTION value=376>REPUBLIC MORTGAGE CORP          </OPTION>
+															
+														<OPTION value=371>RESOURCE BANCSHARES MORT GROUP  </OPTION>
+															
+														<OPTION value=253>RESOURCE BANK                   </OPTION>
+															
+														<OPTION value=999>RPT ACCOUNTS                    </OPTION>
+															
+														<OPTION value=888>RPT RESEARCH                    </OPTION>
+															
+														<OPTION value=178>RYLAND MORTGAGE CO              </OPTION>
+															
+														<OPTION value=373>RYLAND MORTGAGE FNMC            </OPTION>
+															
+														<OPTION value=201>SAFEWAY STORES INC              </OPTION>
+															
+														<OPTION value=388>SANDY SPRING NAT.BANK OF MD.    </OPTION>
+															
+														<OPTION value=379>SAXON REAL ESTATE SERVICES      </OPTION>
+															
+														<OPTION value=097>SECOND NATIONAL FED S B         </OPTION>
+															
+														<OPTION value=380>SECOND TRINITY/CLOISTER II      </OPTION>
+															
+														<OPTION value=268>SECURITY FINANCIAL & MORT COR   </OPTION>
+															
+														<OPTION value=270>SEQUOIA FEDERAL SAVINGS BANK    </OPTION>
+															
+														<OPTION value=028>SIGNET MORTGAGE CORP            </OPTION>
+															
+														<OPTION value=360>SOURCE ONE MORTGAGE SERVICES    </OPTION>
+															
+														<OPTION value=418>SOUTHERN PACIFIC BANK           </OPTION>
+															
+														<OPTION value=387>SOUTHERN PACIFIC FUNDING        </OPTION>
+															
+														<OPTION value=009>SOVEREIGN BANK                  </OPTION>
+															
+														<OPTION value=327>SOVERIGN BANK                   </OPTION>
+															
+														<OPTION value=309>STANDARD MORTGAGE CORP.         </OPTION>
+															
+														<OPTION value=031>STAR BANK MORTGAGE              </OPTION>
+															
+														<OPTION value=051>STATEWIDE FUNDING CORPORATION   </OPTION>
+															
+														<OPTION value=197>STEUART INVESTMENT COMPANY      </OPTION>
+															
+														<OPTION value=198>STEUART INVESTMENT COMPANY      </OPTION>
+															
+														<OPTION value=251>STM MORTGAGE                    </OPTION>
+															
+														<OPTION value=226>SUNTRUST MORTGAGE CO            </OPTION>
+															
+														<OPTION value=174>SUNTRUST MORTGAGE INC           </OPTION>
+															
+														<OPTION value=415>SUNTRUST MORTGAGE INC.          </OPTION>
+															
+														<OPTION value=265>TALLEY R HOLMES                 </OPTION>
+															
+														<OPTION value=111>TEMPLE-INLAND MORTGAGE CORP     </OPTION>
+															
+														<OPTION value=047>THE DIME SAVINGS BANK OF NY     </OPTION>
+															
+														<OPTION value=369>THE JENCO FOUNDATION INC.       </OPTION>
+															
+														<OPTION value=126>THE LEADER MORTGAGE COMPANY     </OPTION>
+															
+														<OPTION value=421>THE MORTGAGE SERVICE            </OPTION>
+															
+														<OPTION value=175>THE MORTGAGE SOURCE             </OPTION>
+															
+														<OPTION value=173>THE WASHINGTON LAND CO          </OPTION>
+															
+														<OPTION value=220>THOMAS D WALSH                  </OPTION>
+															
+														<OPTION value=014>THOMAS P BROWN MANAGEMENT INC   </OPTION>
+															
+														<OPTION value=184>TOTAL MORTGAGE SOLUTIONS LP     </OPTION>
+															
+														<OPTION value=090>TRANSAMERICA REAL EST TAX SER   </OPTION>
+															
+														<OPTION value=241>TRANSWORLD MORTGAGE             </OPTION>
+															
+														<OPTION value=099>TRANSWORLD MORTGAGE CORP        </OPTION>
+															
+														<OPTION value=177>UNION FINANCIAL CORP            </OPTION>
+															
+														<OPTION value=349>UNION PLANTERS BANK             </OPTION>
+															
+														<OPTION value=063>UNION PLANTERS MORTGAGE         </OPTION>
+															
+														<OPTION value=064>UNITED COMPANIES LENDING CORP   </OPTION>
+															
+														<OPTION value=169>UNITED SAVINGS BANK             </OPTION>
+															
+														<OPTION value=143>UNITED SAVINGS BANK             </OPTION>
+															
+														<OPTION value=232>UNIVERSAL AMERICAN MORTGAGE CO  </OPTION>
+															
+														<OPTION value=409>US ALLIANCE CREDIT UNION        </OPTION>
+															
+														<OPTION value=086>US BANCORP MORTGAGE COMPANY     </OPTION>
+															
+														<OPTION value=141>US DEPT OF HOUSING              </OPTION>
+															
+														<OPTION value=215>US MARSHALL SERVICE             </OPTION>
+															
+														<OPTION value=336>VANDERFORD COMPANY, INC/INLAND  </OPTION>
+															
+														<OPTION value=093>VIRGINIA FIRST SAVINGS BANK     </OPTION>
+															
+														<OPTION value=112>WACHOVIA MORTGAGE CO            </OPTION>
+															
+														<OPTION value=217>WAGGAMAN-BRAWNER REALTY CORP    </OPTION>
+															
+														<OPTION value=230>WALKER & DUNLOP INC #200        </OPTION>
+															
+														<OPTION value=015>WALTER A BROWN INC              </OPTION>
+															
+														<OPTION value=006>WASHINGTON MORTGAGE CORP        </OPTION>
+															
+														<OPTION value=359>WASHINGTON MUTUAL SAVINGS BANK  </OPTION>
+															
+														<OPTION value=258>WATERFIELD MORTGAGE CO          </OPTION>
+															
+														<OPTION value=101>WATERFIELD MORTGAGE CO INC      </OPTION>
+															
+														<OPTION value=161>WELLS FARGO BANK                </OPTION>
+															
+														<OPTION value=323>WELLS FARGO BANK                </OPTION>
+															
+														<OPTION value=075>WELLS FARGO HOME MORTGAGE       </OPTION>
+															
+														<OPTION value=338>WENDOVER FUNDING GOVERNMENT     </OPTION>
+															
+														<OPTION value=195>WENDOVER FUNDING INC            </OPTION>
+															
+														<OPTION value=401>WESTERN FINANCIAL BANK          </OPTION>
+															
+														<OPTION value=056>WESTVIEW FEDERAL SAVINGS        </OPTION>
+															
+														<OPTION value=089>WILLIAM C SMITH & CO            </OPTION>
+															
+														<OPTION value=092>WILLIAM C SMITH & CO INC        </OPTION>
+															
+														<OPTION value=181>WMC MORTGAGE CO                 </OPTION>
+															
+														<OPTION value=250>WORLD SAVINGS & LOAN ASSOC      </OPTION>
+															
+														<OPTION value=384>ZURICH CENTERE RES              </OPTION>
+															
+												 </SELECT>
+											</td>
+										</tr>
+										<tr bordercolor="#E1ECF2">
+											<TD vAlign=center><STRONG><FONT face=Verdana size=1>Use Code:</FONT></STRONG></TD>
+											<TD class=StdBlank width="100%">
+												<SELECT name=selectUseCode>
+													<OPTION value="" selected></OPTION>
+													
+													<OPTION value=001>001 - Residential-Single Family (NC)</OPTION>
+												
+													<OPTION value=002>002 - Residential-Multi-Family (NC) </OPTION>
+												
+													<OPTION value=003>003 - Residential-Transient (NC)    </OPTION>
+												
+													<OPTION value=004>004 - Commercial-Retail (NC)        </OPTION>
+												
+													<OPTION value=005>005 - Commercial-Office (NC)        </OPTION>
+												
+													<OPTION value=006>006 - Commercial-Specific Purpos(NC)</OPTION>
+												
+													<OPTION value=007>007 - Industrial (NC)               </OPTION>
+												
+													<OPTION value=008>008 - Special Purpose (NC)          </OPTION>
+												
+													<OPTION value=011>011 - Residential-Row-Single-Family </OPTION>
+												
+													<OPTION value=012>012 - Residential-Detached-Single-Fa</OPTION>
+												
+													<OPTION value=013>013 - Residential-Semi-Detached-Sing</OPTION>
+												
+													<OPTION value=014>014 - Residential-Garage            </OPTION>
+												
+													<OPTION value=015>015 - Residential-Mixed Use         </OPTION>
+												
+													<OPTION value=016>016 - Residential-Condo-Horizontal  </OPTION>
+												
+													<OPTION value=017>017 - Residential-Condo-Vertical    </OPTION>
+												
+													<OPTION value=018>018 - Residential-Condo-Garage      </OPTION>
+												
+													<OPTION value=019>019 - Residential-Single-Family-Misc</OPTION>
+												
+													<OPTION value=021>021 - Residential-Apartment-Walk-Up </OPTION>
+												
+													<OPTION value=022>022 - Residential-Apartment-Elevator</OPTION>
+												
+													<OPTION value=023>023 - Residential Flats-Less than 5 </OPTION>
+												
+													<OPTION value=024>024 - Residential-Conversions-Less t</OPTION>
+												
+													<OPTION value=025>025 - Residential-Conversion-5 Units</OPTION>
+												
+													<OPTION value=026>026 - Residential-Cooperative-Horizo</OPTION>
+												
+													<OPTION value=027>027 - Residential-Cooperative-Vertic</OPTION>
+												
+													<OPTION value=028>028 - Residential-Conversions-Mrth5 </OPTION>
+												
+													<OPTION value=029>029 - Residential-Multifamily, Misc </OPTION>
+												
+													<OPTION value=031>031 - Hotel-Small                   </OPTION>
+												
+													<OPTION value=032>032 - Hotel-Large                   </OPTION>
+												
+													<OPTION value=033>033 - Motel                         </OPTION>
+												
+													<OPTION value=034>034 - Club-Private                  </OPTION>
+												
+													<OPTION value=035>035 - Tourist Homes                 </OPTION>
+												
+													<OPTION value=036>036 - Dormitory                     </OPTION>
+												
+													<OPTION value=037>037 - Inn                           </OPTION>
+												
+													<OPTION value=038>038 - Fraternity/Sorority House     </OPTION>
+												
+													<OPTION value=039>039 - Residential-Transient, Misc   </OPTION>
+												
+													<OPTION value=041>041 - Store-Small 1-Story           </OPTION>
+												
+													<OPTION value=042>042 - Store-Misc                    </OPTION>
+												
+													<OPTION value=043>043 - Store-Department              </OPTION>
+												
+													<OPTION value=044>044 - Store-Shopping Center/Mall    </OPTION>
+												
+													<OPTION value=045>045 - Store-Restaurant              </OPTION>
+												
+													<OPTION value=046>046 - Store-Barber/Beauty Shop      </OPTION>
+												
+													<OPTION value=047>047 - Store-Super Market            </OPTION>
+												
+													<OPTION value=048>048 - Commercial-Retail-Condo       </OPTION>
+												
+													<OPTION value=049>049 - Commercial-Retail-Misc        </OPTION>
+												
+													<OPTION value=051>051 - Commercial-Office-Small       </OPTION>
+												
+													<OPTION value=052>052 - Commercial-Office-Large       </OPTION>
+												
+													<OPTION value=053>053 - Commercial-Planned Development</OPTION>
+												
+													<OPTION value=056>056 - Office-Condo-Horizontal       </OPTION>
+												
+													<OPTION value=057>057 - Office-Condo-Vertical         </OPTION>
+												
+													<OPTION value=058>058 - Commercial-Office-Condo       </OPTION>
+												
+													<OPTION value=059>059 - Commercial-Office-Misc.       </OPTION>
+												
+													<OPTION value=061>061 - Commercial-Banks, Financial   </OPTION>
+												
+													<OPTION value=062>062 - Commercial-Garage,Vehicle Sale</OPTION>
+												
+													<OPTION value=063>063 - Commercial-Parking Garage     </OPTION>
+												
+													<OPTION value=064>064 - Parking Lot-Special Purpose   </OPTION>
+												
+													<OPTION value=065>065 - Vehicle Service Station-Vintag</OPTION>
+												
+													<OPTION value=066>066 - Theaters, Entertainment       </OPTION>
+												
+													<OPTION value=067>067 - Commercial-Restaurant         </OPTION>
+												
+													<OPTION value=068>068 - Commercial-Restaurant-Fast Foo</OPTION>
+												
+													<OPTION value=069>069 - Commercial-Specific Purp,Misc </OPTION>
+												
+													<OPTION value=071>071 - Industrial-Raw Material Handli</OPTION>
+												
+													<OPTION value=072>072 - Industrial-Heavy Manufacturing</OPTION>
+												
+													<OPTION value=073>073 - Industrial-Light              </OPTION>
+												
+													<OPTION value=074>074 - Industrial-Warehouse-1-Story  </OPTION>
+												
+													<OPTION value=075>075 - Industrial-Warehouse-Multi-Sto</OPTION>
+												
+													<OPTION value=076>076 - Industrial-Truck Terminal     </OPTION>
+												
+													<OPTION value=078>078 - Warehouse-Condo               </OPTION>
+												
+													<OPTION value=079>079 - Industrial-Misc               </OPTION>
+												
+													<OPTION value=081>081 - Religious                     </OPTION>
+												
+													<OPTION value=082>082 - Medical                       </OPTION>
+												
+													<OPTION value=083>083 - Educational                   </OPTION>
+												
+													<OPTION value=084>084 - Public Service                </OPTION>
+												
+													<OPTION value=085>085 - Embassy, Chancery, etc.       </OPTION>
+												
+													<OPTION value=086>086 - Museum, Library, Gallery      </OPTION>
+												
+													<OPTION value=087>087 - Recreational                  </OPTION>
+												
+													<OPTION value=088>088 - Health Care Facility          </OPTION>
+												
+													<OPTION value=089>089 - Special Purpose-Misc          </OPTION>
+												
+													<OPTION value=091>091 - Vacant-True                   </OPTION>
+												
+													<OPTION value=092>092 - Vacant-with Permit            </OPTION>
+												
+													<OPTION value=093>093 - Vacant-Zoning Limits          </OPTION>
+												
+													<OPTION value=094>094 - Vacant-False-Abutting         </OPTION>
+												
+													<OPTION value=095>095 - Vacant-Commercial Use         </OPTION>
+												
+													<OPTION value=096>096 - Vacant-Unimproved Parking     </OPTION>
+												
+													<OPTION value=097>097 - Vacant-Improved and Abandoned </OPTION>
+												
+													<OPTION value=116>116 - Condo-Horizontal-Combined-    </OPTION>
+												
+													<OPTION value=117>117 - Condo-Vertical-Combined       </OPTION>
+												
+													<OPTION value=126>126 - Coop-Horizontal-Mixed Use     </OPTION>
+												
+													<OPTION value=127>127 - Coop-Vertical-Mixed Use       </OPTION>
+												
+													<OPTION value=165>165 - Vehicle Service Station-Kiosk </OPTION>
+												
+													<OPTION value=189>189 - Special Purpose-Memorial      </OPTION>
+												
+													<OPTION value=191>191 - Vacant True                   </OPTION>
+												
+													<OPTION value=197>197 - Vacant-Improved and Abandoned </OPTION>
+												
+													<OPTION value=214>214 - Garage-Multi-Family           </OPTION>
+												
+													<OPTION value=216>216 - Condo-Investment-Horizontal   </OPTION>
+												
+													<OPTION value=217>217 - Condo-Investment-Vertical     </OPTION>
+												
+													<OPTION value=265>265 - Vehicle Service Station-Kiosk </OPTION>
+												
+													<OPTION value=316>316 - Condo-Duplex                  </OPTION>
+												
+													<OPTION value=365>365 - Vehicle Service Station-Market</OPTION>
+												
+													<OPTION value=416>416 - Condo-Horizontal-Parking-Unid </OPTION>
+												
+													<OPTION value=417>417 - Condo-Vertical-Parking-Unid   </OPTION>
+												
+													<OPTION value=465>465 - Vehicle Service Station-Market</OPTION>
+												
+													<OPTION value=516>516 - Condo-Detached                </OPTION>
+												
+												</SELECT>
+											</TD>
+										</tr>
+										<tr bordercolor="#E1ECF2">
+											<td vAlign=center><STRONG><FONT face=Verdana size=1>Ward:</FONT></STRONG></td>
+											<td class=StdBlank>
+												<SELECT name=selectWard> 
+													<OPTION value="" selected></option>
+													<OPTION value="1">1</option>
+									                <OPTION value="2">2</option>
+									                <OPTION value="3">3</option>
+									                <OPTION value="4">4</option>
+									                <OPTION value="5">5</option>
+									                <OPTION value="6">6</option>
+									                <OPTION value="7">7</option>
+									                <OPTION value="8">8</option>
+									            </SELECT>
+											</td>
+										</tr>
+										<tr bordercolor="#E1ECF2">
+											<TD vAlign=center><STRONG><FONT face=Verdana size=1>Sale Date:</FONT></STRONG></TD>
+											<TD>
+												<TABLE>
+													<TR>
+														<TD vAlign=center><STRONG><FONT face=Verdana size=1>From:</FONT></STRONG></TD>
+														<TD align = "left"><INPUT TYPE="TEXT" maxLength=10 size=10 name=dtFrom><FONT face=Verdana size=1>&nbsp;(MM/DD/YYYY)</font></TD>
+														<TD vAlign=center><STRONG><FONT face=Verdana size=1>To:</FONT></STRONG></TD>
+														<TD><INPUT TYPE="TEXT" maxLength=10 size=10 name=dtTo><FONT face=Verdana size=1>&nbsp;(MM/DD/YYYY)</font></TD>
+													</TR>
+												</TABLE>
+											</TD>
+										</tr>
+										<tr bordercolor="#E1ECF2">
+											<td><P>&nbsp;</P></td>
+											<td>&nbsp;</td>
+										</tr>
+										<tr bordercolor="#E1ECF2">
+											<td colspan="2" width="100%" align="left">
+												<table width="70%" align="left">
+													<tr>
+														<td align="left">	
+															<INPUT TYPE="image" src="images/search_now.gif" border=0 name="imgSearch" id="imgSearch" alt="Search" onclick="submit"> &nbsp; &nbsp; &nbsp;
+															<A HREF="https://www.taxpayerservicecenter.com/RP_Search.jsp?search_type=Assessment" Target="_parent"><IMG src="images/Clear.gif" border=0 alt="Clear" name="imgReset"></A><BR>
+														</td>
+													</tr>
+												</table>
+											</td>
+										</tr>
+										<!-- Hidden value store from iframe drop down box -->
+										<tr bordercolor="#E1ECF2">
+											<td><input TYPE="HIDDEN" NAME=txtSubNbdh value=""></td>
+											<td></td>
+										</tr>
+										</table>
+									<br /><br/>
+									<table width="100%" border="1" cellpadding="3" cellspacing="0" bordercolor="#0000FF" bgcolor="#E1ECF2">
+										<tr bordercolor="#E1ECF2">
+											<td>
+												<font face="Arial" size="2" color="red">												 
+												<b> 
+													Bill Disclaimer: The real property records you are about to access are electronic public records and are made available in electronic format as a public service.   
+													The District shall not be responsible for alterations you make to the information from the database.  The data made available on the following pages is updated periodically, however the data on the real property bill is accurate as of the notice date.  
+													If you believe any data provided is inaccurate, please inform the Office of Tax and Revenue's Customer Service Administration:  at (202) 727-4TAX or via email at taxhelp@dc.gov. 
+												</b>
+												</font>
+											</td>
+										</tr>												
+									</table>  
+									<br/>
+									<table width="100%" border="1" cellspacing="0" cellpadding="3" bgcolor="White">
+										<tr>
+											<td align="left" valign="top">
+												<FONT face=Arial size=2><B>
+												Real Property sale information is provided as a data service to the users of the Real Property database. These sales have not been qualified as arm's-length or non-arm's length.  Use of a particular sale as a comparable for determining valuation will require additional review.  Only sales after January 4, 1999 are available on this site.</B></FONT>
+											</td>
+										</tr>
+									</table>
+									<br/>
+									For information on the security measures implemented for this site, please see the
+									<a class="aLink" href="SecurityInformation.jsp" target="_parent"><b>Security FAQs</b></a>.
+									<br /><br />
+								</td>
+							</tr>							
+						</table>
+					</form>
+					</div>
+				</td><!-- End of your work space -->
+			</tr>
+		</table>	
+		<INPUT TYPE="HIDDEN" NAME="searchType" value=Assessment>
+		<html>
+<head>
+</head>
+
+
+<body>
+
+<ruiFooter>
+	<div id="dcrui-footer-wrapper" class="zone-wrapper dcrui-footer-wrapper clearfix">  
+		<div id="zone-postscript" class="zone zone-postscript clearfix container-12">
+			<div id="resource-icon-section">
+				<a alt="Twitter" href="http://dc.gov/twitter" title="Twitter">
+					<div title="Twitter" class="resource-content-block twitter-resource-icon">
+						<div class="resource-icon-text"> Twitter</div>
+					</div></a>
+				<a title="Facebook" href="http://dc.gov/facebook" alt="Facebook">
+					<div title="Facebook" class="resource-content-block facebook-resource-icon">
+						<div class="resource-icon-text"> Facebook</div>
+					</div></a>
+				<a alt="Mobile" href="http://octo.dc.gov/mobile-apps" title="Mobile">
+					<div title="Mobile" class="resource-content-block mobile-resource-icon">
+						<div class="resource-icon-text"> Mobile</div>
+					</div></a>
+				<a alt="Maps" href="http://dc.gov/maps" title="Maps">
+					<div title="Maps" class="resource-content-block maps-resource-icon">
+						<div class="resource-icon-text"> Maps</div>
+					</div>
+				</a>
+				<a alt="Webcasts" href="http://dc.gov/webcasts" title="Webcasts">
+					<div title="Webcasts" class="resource-content-block webcasts-resource-icon">
+						<div class="resource-icon-text"> Webcasts</div>
+					</div>
+				</a>
+				<a alt="RSS" href="http://dc.gov/rss" title="RSS">
+					<div title="RSS" class="resource-content-block rss-resource-icon">
+						<div class="resource-icon-text"> RSS</div>
+					</div></a>
+				<a alt="Data" href="http://octo.dc.gov/external-link/data-catalog" title="Data">
+					<div title="Data" class="resource-content-block data-resource-icon">
+						<div class="resource-icon-text"> Data</div>
+					</div></a>
+				<a alt="Subscribe" href="http://dc.gov/subscribe" title="Subscribe">
+					<div title="Subscribe" class="resource-content-block subscribe-resource-icon">
+						<div class="resource-icon-text"> Subscribe</div>
+					</div></a>
+			</div>
+				<h4 class="more-link"><a class="more-links" href="http://dc.gov/district-resources">More Resources</a></h4>
+		</div>
+	</div>
+
+
+	<footer id="dcrui-section-footer" class="section dcrui-section-footer">
+		<div id="zone-prefooter-wrapper" class="zone-wrapper zone-prefooter-wrapper clearfix"></div>
+		<div id="zone-footer-wrapper" class="zone-wrapper zone-footer-wrapper clearfix">  
+			<div id="zone-footer" class="zone zone-footer clearfix container-12">
+				<div class="dcFooter">
+					<div class="dcBar">
+						<div class="dcFooterListLower" id="resources-link">
+							<ul>
+								<li class="dcFirstChild"><a title="Resources" href="http://dc.gov/district-resources">Resources</a></li>
+							</ul>
+						</div>
+						<div class="dcFooterList">
+							<div class="footer-icon"><img title="District News" alt="District News" src="/rui_css_images/map_icon_footer.png"></div>
+							<div class="dcFooterLabel">District News</div>
+								<ul id="list">
+									<li><a title="Citywide News" href="http://newsroom.dc.gov">Citywide News</a></li>
+									<li><a title="Citywide Calendar" href="http://calendar.dc.gov">Citywide Calendar</a></li>
+									<li><a target="_blank" class="ext" title="Subscribe to Emails" href="https://service.govdelivery.com/service/user.html?code=DCWASH">Subscribe to Receive Emails</a></li>
+									<li><a title="Subscribe to Text Alerts" href="https://textalert.ema.dc.gov/index.php?CCheck=1">Subscribe to Text Alerts</a></li>
+									<li><a target="_blank" class="ext" title="Subscribe to Newsletters" href="https://public.govdelivery.com/accounts/DCWASH/subscriber/new?">Subscribe to Newsletters</a></li>
+									<li><a title="Government Closures" href="http://app.dc.gov/closures/index.asp">Government Closures</a></li>
+								</ul>
+						</div>
+						<div class="dcFooterList">
+							<div class="footer-icon"><img title="District Initiatives" alt="District Initiatives" src="/rui_css_images/infoCenter_icon_footer.png"></div>
+							<div class="dcFooterLabel">District Initiatives</div>
+								<ul id="list2">
+									<li><a title="Green DC" href="http://green.dc.gov">Green DC</a></li>
+									<li><a title="Grade DC" href="http://grade.dc.gov">Grade DC</a></li>
+									<li><a title="Age-Friendly DC" href="http://agefriendly.dc.gov">Age-Friendly DC</a></li>
+									<li><a title="Sustainable DC" href="http://sustainable.dc.gov">Sustainable DC</a></li>
+									<li><a title="Connect DC" href="http://connect.dc.gov">Connect DC</a></li>
+									<li><a title="Great Streets" href="http://greatstreets.dc.gov">Great Streets</a></li>
+									<li><a title="72hours Emergency Planning" href="http://72hours.dc.gov/">72hours Emergency Planning</a></li>
+								</ul>
+						</div>
+						<div class="dcFooterList">
+							<div class="footer-icon"><img title="About DC" alt="About DC" src="/rui_css_images/community_icon_footer.png"></div>
+							<div class="dcFooterLabel">About DC</div>
+								<ul id="list3">
+									<li><a title="Open DC" href="http://open.dc.gov">Open DC</a></li>
+									<li><a title="Statehood " href="http://statehood.dc.gov">Statehood</a></li>
+									<li><a title="Budget" href="http://budget.dc.gov/">Budget</a></li>
+									<li><a title="Emancipation" href="http://emancipation.dc.gov">Emancipation</a></li>
+									<li><a title="Consumer Protection" href="http://consumer.dc.gov">Consumer Protection</a></li>
+									<li><a title="Contracts" href="http://dc.gov/contracts">Contracts</a></li>
+									<li><a title="Property Quest" href="http://propertyquest.dc.gov">Property Quest</a></li>
+									<li><a title="Track DC" href="http://track.dc.gov">Track DC</a></li>
+								</ul>
+						</div>
+						<div class="dcFooterList">
+							<div class="footer-icon"><img title="Contact Us" alt="Contact Us" src="/rui_css_images/contact_footer_icon.png"></div>
+							<div class="dcFooterLabel">Contact Us</div>
+								<ul id="list5">
+									<li><a title="Agency Directory" href="http://directory.dc.gov">Agency Directory</a></li>
+									<li><a title="Call 311" href="http://311.dc.gov/">Call 311</a></li>
+									<li><a title="Contact the Mayor" href="http://app.dc.gov/apps/about.asp?page=atd&amp;type=dsf&amp;referrer=[$DSF_SERVER_NAME$]&amp;agency_id=1075">Contact the Mayor</a></li>
+									<li><a title="Contact Agency Directors" href="http://dc.gov/page/contact-agency-directors">Contact Agency Directors</a></li>
+									<li><a title="Make FOIA Requests" href="http://foia.dc.gov">FOIA Requests</a></li>
+									<li><a title="Send Feedback" href="http://feedback.dc.gov">Send Feedback</a></li>
+									<li><a title="Service Request Center" href="http://311.dc.gov/">Service Request Center</a></li>
+								</ul>
+						</div>
+					</div>
+				</div>			
+			</div>
+		</div>
+
+		<div id="dcrui-second-footer-wrapper" class="zone-wrapper dcrui-second-footer-wrapper">  
+			<div id="zone-second-footer" class="zone zone-second-footer">
+				<div class="dcFooter">
+					<div class="dcBar">
+						<div class="dcFooterListLower">
+							<ul>
+								<li class="dcFirstChild"><a title="Accessibility" href="http://dc.gov/page/dcgov-accessibility-policy">Accessibility</a></li>
+							 	<li><a title="Privacy and Security" href="http://dc.gov/page/privacy-and-security">Privacy and Security</a></li>
+							 	<li><a title="Terms and Conditions" href="http://dc.gov/page/terms-and-conditions-use">Terms and Conditions</a></li>
+								<li><a href="http://dc.gov/page/about-district-government-website" title="About DC.Gov">About DC.Gov</a></li>
+								<li class="last"></li>
+							</ul>
+						</div>
+					</div>
+				</div>			 
+			</div>
+		</div>
+	</footer>
+</ruiFooter>
+
+</body>
+</html>
+ <!--SCR 6845-->  
+	</div>
+</BODY>
+</HTML>
+

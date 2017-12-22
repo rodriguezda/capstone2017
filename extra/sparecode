@@ -1,0 +1,62 @@
+  regex = r"1*[1-9][1-9][[1-9]"
+    #######################
+    #regex = r"\d{4,}"
+    #######################
+    matches = re.search(regex, results2) #.group()
+    print(matches)
+    #no_of_entries = math.ceil(int(matches)/100) #returns number of pages of listings
+    no_of_entries = math.ceil(int(703)/100) #returns number of pages of listings
+
+    a = 1
+    print("number of entries: ", no_of_entries)
+    
+    last_page = False
+    
+    while last_page is False:
+        
+        html = driver.page_source #scrapes page
+        soup = BeautifulSoup(html, "lxml") 
+        table = soup.find('table', {'cellspacing' : "2"})
+        
+        table_rows = table.find_all('tr')
+        print(len(table_rows), type(table_rows))
+        
+        quit()
+        
+        if len(table_rows)<101:
+            last_page = True
+    
+    #while a < no_of_entries+1:
+    #while a < 7:
+#         print('number of pages: ', no_of_entries)
+#         print('page: ', a)
+        
+        time.sleep(1)
+        
+        #html = driver.page_source #scrapes page
+        #soup = BeautifulSoup(html, "lxml") 
+        #table = soup.find('table', {'cellspacing' : "2"})
+        
+        #length =len(table.find_all('tr')) #confirms length of table
+        
+        #for j in range(2, length+1): #let's start iterating through the table, click into each listing
+        for j,tr in enumerate(table.find_all('tr'), start = 2): #confirms length of table
+            print(j, tr)
+            #time.sleep(1)
+            try:
+                listings = driver.find_element_by_xpath("//*[@id='TABLE1']/tbody/tr/td[2]/div/table/tbody/tr[2]/td/table/tbody/tr[{}]/td[1]/a".format(j)).click()
+                #clicks into listing
+            except:
+                break
+            print('listing: ', j, " on page ", a, " of ", no_of_entries)
+            #time.sleep(1)
+            
+            scrape = driver.page_source #scrape 
+            #scrapes listing page
+
+            soup = BeautifulSoup(scrape, 'lxml')
+
+            home_data = soup.find_all('td', class_= 'RPRowData')
+            price = soup.find_all('td', class_= 'RPRightData')
+
+            records = []
