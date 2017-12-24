@@ -1,68 +1,35 @@
 # Diego's Capstone
-Week 12: 9:00 a.m., Friday, December 22
+Due: Week 12: 9:00 a.m., Friday, December 22
 
 ## Problem Statement
-The goal of this project is to uncover home availability in Washington DC. I am doing that by analysing data that I scraped [how much data?] from the DC Office of Tax and Revenue website.
+The goal of this project is to forecast home availability in Washington DC. I am doing that by analysing data that I scraped from the DC Office of Tax and Revenue website, which consists of over 50,000 unique property listings over a 17 year timespan (2000-2017).
 
-The reason I scraped the OTR Property Tax Database is because home sales data is hard to find. Home listing services and aggregators like Zillow do host the estimated price of homes, but they don't provide access to a convenient export of home sales data. They also do not allow scraping. I couldn't find anything at Fannie Mae or Freddie Mac
+The reason I scraped the OTR Property Tax Database is because home sales data is hard to find. Home listing services and aggregators like Zillow do host the estimated price of homes, but they don't provide access to a convenient export of home sales data. They also do not allow scraping. I couldn't find any pubic resources or repositories from the Federal Reserve, Fannie Mae or Freddie Mac.
 
-Articulate “Specific aim”
+## Success Criteria
+I define a successful project by the following criteria:
+- Able to pinpoint neighborhood(s) that have or are projected to have homes for sale
+- Able to produce a model that forecasts
+- Able to visually show trends in home availability (through EDA)
 
-### Goals and Sucess Criteria
-After articulating your problem statement, outline your goals and success criteria.
+## Future Success Criteria (for the Spotlight)
+- Provide specific availability and pricing metrics for different DC neighborhoods
+- Present metrics in a visual and interactive format (such as a website built with Flask or a Tableau Dataset) that provide forecasts for home availability and pricing per neighborhood).
 
-Has a measurable impact
-
-
-## Define risks & assumptions
-
-### A Potential Use Case or Audience
+## A Potential Use Case or Audience
 Key stakeholders: investors, realtors and homebuyers. Anyone interested in the supply-side of homes. Knowing where and when properties may pan up, take some of the guesswork out of real estate investing. knowing that there will be properties to bid on allows you to focus efforts in that area or during that period of time.
 
-Taking this one step further: I could try to find the neighborhoods with the highest amount of predicted home avails and the lowest mean or median home price. Low home prices are usually driving by economic indicators, like (pre)foreclosure, debt or delinquency, divorce or death. Layering these economic indicators into my model could account for some of the variance. Taht's for round 2 and not part of this assignment!
+Taking this one step further, for the Spotlight: I could try to find the neighborhoods with the highest amount of predicted home avails and the lowest mean or median home price. Low home prices are usually driving by economic indicators, like (pre)foreclosure, debt or delinquency, divorce or death. Layering these economic indicators into my model could account for some of the variance. That's for round 2 and not part of this assignment!
 
-### About the Data Source
-The OTR Property Tax Database
+## About the Data Source, The OTR Property Tax Database
 
-he Office of Tax and Revenue's (OTR) real property tax database provides online access to real property information that was formerly available only through manual searches and at various DC public libraries. You can obtain property value, assessment roll, and other information for more than 180,000 parcels using the links below. 
+The Office of Tax and Revenue's (OTR) real property tax database provides online access to real property information that was formerly available only through manual searches and at various DC public libraries. You can obtain property value, assessment roll, and other information for more than 180,000 parcels using the links below. 
 
 The Office of Tax and Revenue provides download access to real property files for major customers (not noobs like me). This service is restricted to mortgage companies that pay tax bills for ten (10) or more properties.
 
 Which is why I had to scrape.
 
-### About the Data Set
-How many records?
-
-What are the 'predictors?' List them here
-neighborhood: clean
-subneighborhood: clean
-use_code: clean (create a data dictionary for this column)
-exception: clean
-tax_type: clean (create a data dictionary for this column)
-tax_class2: clean (create a data dictionary for this column)
-homestead: dummified and column cleaned
-assessor: cleaned (titlecase)
-building_area: empty (for now. check again once you get the full dataset)
-ward: float status. cleaning not needed
-land_area: clean (dropped commas)
-triennial_group: no cleaning necessary (float)
-owner_name: cleaned (converted to title case)
-address: cleaned (spend an hour on this!
-sale_price: cleaned (dropped commas and dollar signs)
-current_value: drop it
-new_value: drop it
-land_2017: cleaned (dropped commas and dollar signs)
-land_2018: cleaned (dropped commas and dollar signs)
-improvements_2017: cleaned (dropped commas and dollar signs)
-improvements_2018: cleaned (dropped commas and dollar signs)
-value_2017: cleaned (dropped commas and dollar signs)
-value_2018: cleaned (dropped commas and dollar signs)
-assessment_2017: cleaned (dropped commas and dollar signs)
-assessment_2018: cleaned (dropped commas and dollar signs)
-
-
 ### Preprocessing
-As part of pre-processing, What did I filter for?
 Home sales: I confirmed home sales by confirming whether there was a dollar amount in the sales column. homes that did not contain dollar amounts were considered non-transactions and droped from the dataset. since I only care about date, I converted date to index and created a count column to aggregrate sold homes.
 
 Property type: OTR has a codebook for property type. the datset is limited to residential property, things that you and I are most likely to purchase: single family homes, condos, etc. there are at least [X type] of residential properties, and there are over 30 different codes for different property types, some residential, some commercial
@@ -116,7 +83,7 @@ The repo contains the following folders and content:
 
 ## My Biggest Obstacles
 Time: I put this together yesterday
-Data: I started scraping on Saturday. That shit takes forever. I got through about 75% of what I wanted to get through. 
+Data: I started scraping on Saturday. That takes forever. I got through about 75% of what I wanted to get through. 
 Data: I grabbed the wrong address column. I grabed the mailing address instead of the premise address. which mean some of the addresses are out of state. i had to drop those, they accounted for X. The ones that were instate matched the ones that were 
 
 ### The Presentation
